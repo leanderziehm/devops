@@ -3,7 +3,7 @@
 # CLI to set up a new web app
 
 # Ask for full domain
-read -p "Enter your full domain (e.g., example.leanderziehm.com): " DOMAIN
+read -p "Enter your full domain (e.g., example.website.com): " DOMAIN
 
 # Then ask for port
 read -p "Enter the port your app will run on (e.g., 5014): " APP_PORT
