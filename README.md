@@ -1,5 +1,10 @@
 # Devops
 
+```
+curl -O https://raw.githubusercontent.com/LeanderZiehm/devops/refs/heads/main/setup-nginx.sh
+```
+
+
 ## My stack: 
 - revers proxy: Nginx
 - containerization: docker and docker-compose
