@@ -1,8 +1,16 @@
 # Devops
 
+
+## Setup Nginx:
 ```
 curl -O https://raw.githubusercontent.com/LeanderZiehm/devops/refs/heads/main/setup-nginx.sh
 ```
+
+## Backup Postges:
+```
+curl -O https://raw.githubusercontent.com/LeanderZiehm/devops/refs/heads/main/backup-postgres.sh
+```
+
 
 
 ## My stack: 
