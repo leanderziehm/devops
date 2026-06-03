@@ -1,3 +1,5 @@
+tfplan
+*.json
 dev
 *.env
 .terraform
