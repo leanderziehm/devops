@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  loki:
+    image: docker.io/grafana/loki:latest
+    container_name: loki
+    ports:
+      - "3100:3100"
+    command: -config.file=loki-config.yml
+    volumes:
+      - ./loki-config.yml:/etc/loki/config.yml:ro
+      - loki-data:/loki
+
+  alloy:
+    image: docker.io/grafana/alloy:latest
+    container_name: alloy
+    depends_on:
+      - loki
+    volumes:
+      - ./config.alloy:/etc/alloy/config.alloy:ro
+      - /var/log/journal:/var/log/journal:ro
+      - /run/log/journal:/run/log/journal:ro
+      - /etc/machine-id:/etc/machine-id:ro
+    command: run /etc/alloy/config.alloy
+
+volumes:
+  loki-data:

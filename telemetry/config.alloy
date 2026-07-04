@@ -1,0 +1,15 @@
+loki.source.journal "systemd" {
+  path = "/var/log/journal"
+
+  labels = {
+    job = "systemd-journal"
+  }
+
+  forward_to = [loki.write.default.receiver]
+}
+
+loki.write "default" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}

@@ -11,6 +11,60 @@ curl -O https://raw.githubusercontent.com/LeanderZiehm/devops/refs/heads/main/se
 curl -O https://raw.githubusercontent.com/LeanderZiehm/devops/refs/heads/main/backup-postgres.sh
 ```
 
+# hosted:
+umami STAYS
+java
+wordpress
+database. STAYS # put mysql on
+
+1. start mysql container on database vps.
+2. export wordpress data and import in database server.
+3. move wordpress on java server
+4. move umami on java server.
+5. whipe wordpress and umami servers and install rocky linux 
+
+
+podman exec -e MYSQL_PWD=examplepass wordpress-stack_db_1 mysqldump -u exampleuser --all-databases > wordpress_backup.sql
+
+podman exec -e MYSQL_PWD=examplepass wordpress-stack_db_1 mysqldump -u exampleuser --single-transaction --routines --triggers exampledb > wordpress_backup.sql
+
+
+podman exec -e MYSQL_PWD=password-here wordpress-stack_db_1 mysqldump -u user-here --single-transaction --routines --triggers --no-tablespaces databse-here > wordpress_backup.sql
+
+-----
+
+
+
+
+ubuntu@wordpress-vm:~$ podman inspect wordpress-stack_db_1 | grep -i MYSQL
+               "mysqld"
+          "ImageName": "docker.io/library/mysql:8.0",
+                    "Destination": "/var/lib/mysql",
+                    "MYSQL_VERSION=8.0.45-1.el9",
+                    "MYSQL_SHELL_VERSION=8.0.45-1.el9",
+                    "MYSQL_RANDOM_ROOT_PASSWORD=1",
+                    "MYSQL_DATABASE=exampledb",
+                    "MYSQL_USER=exampleuser",
+                    "MYSQL_PASSWORD=examplepass",
+                    "MYSQL_MAJOR=8.0",
+                    "mysqld"
+               "Image": "docker.io/library/mysql:8.0",
+                    "MYSQL_DATABASE=exampledb",
+                    "MYSQL_USER=exampleuser",
+                    "MYSQL_PASSWORD=examplepass",
+                    "MYSQL_RANDOM_ROOT_PASSWORD=1",
+                    "wordpress-stack_db:/var/lib/mysql",
+                    "docker.io/library/mysql:8.0"
+                    "wordpress-stack_db:/var/lib/mysql:rw,rprivate,nosuid,nodev,rbind"
+ubuntu@wordpress-vm:~$ podman exec -it wordpress-stack_wordpress_1 cat /var/www/html/wp-con
+
+
+
+
+
+
+----
+
 
 
 ## My stack: 
