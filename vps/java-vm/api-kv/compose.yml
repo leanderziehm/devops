@@ -1,0 +1,15 @@
+services:
+  api-kv:
+    image: ghcr.io/leanderziehm/api-kv:main
+    container_name: api-kv
+    ports:
+      - "4001:4001"
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_DATABASE: ${POSTGRES_DATABASE}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PORT: ${PORT}
