@@ -6,7 +6,7 @@ prometheus.scrape "node" {
   targets = [
     {
       __address__ = "node_exporter:9100",
-      instance    = "server-a",
+      instance    = env("PC_NAME"),
     },
   ]
 
