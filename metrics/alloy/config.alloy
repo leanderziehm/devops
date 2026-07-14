@@ -1,0 +1,32 @@
+//
+// Collect Linux metrics
+//
+
+prometheus.scrape "node" {
+  targets = [
+    {
+      __address__ = "node_exporter:9100",
+      instance    = "server-a",
+    },
+  ]
+
+  forward_to = [
+    prometheus.remote_write.grafanacloud.receiver,
+  ]
+}
+
+
+//
+// Send metrics to Grafana Cloud
+//
+
+prometheus.remote_write "grafanacloud" {
+  endpoint {
+    url = env("GRAFANA_PROMETHEUS_URL")
+
+    basic_auth {
+      username = env("GRAFANA_INSTANCE_ID")
+      password = env("GRAFANA_API_KEY")
+    }
+  }
+}

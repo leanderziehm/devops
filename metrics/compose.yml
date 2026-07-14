@@ -1,0 +1,43 @@
+services:
+
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    restart: unless-stopped
+
+    ports:
+      - "9100:9100"
+
+    pid: host
+
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/rootfs'
+
+
+  alloy:
+    image: docker.io/grafana/alloy:latest
+    container_name: alloy
+    restart: unless-stopped
+
+    ports:
+      - "12345:12345"
+
+    volumes:
+      - ./alloy/config.alloy:/etc/alloy/config.alloy:ro
+
+    environment:
+      GRAFANA_PROMETHEUS_URL: ${GRAFANA_PROMETHEUS_URL}
+      GRAFANA_INSTANCE_ID: ${GRAFANA_INSTANCE_ID}
+      GRAFANA_API_KEY: ${GRAFANA_API_KEY}
+
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - /etc/alloy/config.alloy
