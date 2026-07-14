@@ -9,6 +9,7 @@ NOTIFY_URL = "https://notify.leanderziehm.com/notify/me"
 POLL_INTERVAL = 0.6
 
 pc_name = subprocess.check_output(["hostname"]).decode().strip()
+print("test agent starting")
 
 def parse_who():
     result = subprocess.run(["who"], capture_output=True, text=True)
@@ -89,6 +90,7 @@ def format_notification(event):
 
 
 def main():
+    print("main is now running")
     previous = parse_who()
     while True:
         time.sleep(POLL_INTERVAL)
@@ -96,11 +98,7 @@ def main():
         # print("current:",current)
         changes = compare(previous, current)
         # print("changes:",changes)
-
-        
         if changes["login"] or changes["logout"]:
-            
-          
             event = {
                 "text": f"source:{pc_name}",
                 "category": "security",
