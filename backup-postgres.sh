@@ -2,8 +2,9 @@
 set -euo pipefail
 
 # to run this every day on 3AM write this: chmod +x backup-postgres.sh
+# mkdir ~/logs
 # crontab -e
-# 0 3 * * 0 ~/devops/backup-postgres.sh >> /var/log/pg_backup.log 2>&1
+# 0 3 * * 0 ~/devops/backup-postgres.sh >> ~/log/pg_backup.log 2>&1
 
 START_TIME="$(date +%s)"
 # ---- config ----
