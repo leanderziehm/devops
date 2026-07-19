@@ -5,6 +5,8 @@ set -euo pipefail
 # mkdir ~/logs
 # crontab -e
 # 0 3 * * 0 ~/devops/backup-postgres.sh >> ~/log/pg_backup.log 2>&1
+# or 
+# 0 3 * * 0 /bin/bash ~/devops/backup-postgres.sh >> ~/log/pg_backup.log 2>&1
 
 START_TIME="$(date +%s)"
 # ---- config ----

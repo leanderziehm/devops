@@ -6,6 +6,8 @@ START_TIME="$(date +%s)"
 # to run this every day on 3AM write this: chmod +x backup-ssh-logs.sh
 # crontab -e
 # 0 3 * * * ~/devops/backup-ssh-logs.sh >> ~/logs/backup-ssh-logs.log 2>&1
+# or 
+# 0 3 * * * /bin/bash ~/devops/backup-ssh-logs.sh >> ~/logs/backup-ssh-logs.log 2>&1
 
 # ---- config ----
 
