@@ -10,6 +10,20 @@ curl -O https://raw.githubusercontent.com/LeanderZiehm/devops/refs/heads/main/se
 ```
 curl -O https://raw.githubusercontent.com/LeanderZiehm/devops/refs/heads/main/backup-postgres.sh
 ```
+# Git clone 
+
+```
+git clone 
+```
+then 
+
+```
+cd ~
+ln -s ~/devops/backup-postgres.sh backup-postgres.sh
+ln -s ~/devops/backup-ssh-logs.sh backup-ssh-logs.sh
+ln -s ~/devops/setup-nginx.sh setup-nginx.sh
+```
+
 
 # hosted:
 umami STAYS
