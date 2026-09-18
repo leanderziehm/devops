@@ -1,26 +1,33 @@
 # Devops
 
+## Dev Environment
 
-## Setup Devops:
+```
+podman run --rm -it ghcr.io/leanderziehm/dev-environment:latest bash
+```
+
+
+## Others
+
+### Setup Devops:
 ```sh
-curl -O https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/setup.sh && bash setup.sh
+curl -O https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/others/setup.sh && bash setup.sh
 ```
 
 ## Setup Nginx:
 ```sh
-curl -O https://raw.githubusercontent.com/LeanderZiehm/devops/refs/heads/main/setup-nginx.sh
+curl -O https://raw.githubusercontent.com/LeanderZiehm/devops/refs/heads/main/others/setup-nginx.sh
 ```
 
 ## Backup Postges:
 ```sh
-curl -O https://raw.githubusercontent.com/LeanderZiehm/devops/refs/heads/main/backup-postgres.sh
+curl -O https://raw.githubusercontent.com/LeanderZiehm/devops/refs/heads/main/others/backup-postgres.sh
 ```
 
 # Git Key
 ```sh
 curl -O https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/gitkey1.py
 ```
-
 
 # Git clone 
 
