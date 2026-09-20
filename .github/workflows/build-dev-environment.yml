@@ -13,10 +13,18 @@ on:
 permissions:
   contents: read
   packages: write
-
+  
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          - file: Containerfile
+            image: dev-environment
+          - file: Containerfile.fedora
+            image: dev-environment-fedora
 
     steps:
       - name: Checkout
@@ -36,8 +44,8 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./others/containers/dev-environment/Containerfile
+          file: ./others/containers/dev-environment/${{ matrix.file }}
           push: true
           tags: |
-            ghcr.io/leanderziehm/dev-environment:latest
-            ghcr.io/leanderziehm/dev-environment:${{ github.sha }}
+            ghcr.io/leanderziehm/${{ matrix.image }}:latest
+            ghcr.io/leanderziehm/${{ matrix.image }}:${{ github.sha }}
