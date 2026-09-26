@@ -1,0 +1,10 @@
+FROM quay.io/fedora/fedora:latest
+
+RUN useradd -m -s /bin/bash dev \
+    && echo "dev ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/dev \
+    && chmod 0440 /etc/sudoers.d/dev
+
+USER dev
+WORKDIR /home/dev
+
+CMD ["/bin/bash"]
