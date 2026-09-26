@@ -1,0 +1,7 @@
+services:
+  languagetool:
+    image: docker.io/erikvl87/languagetool
+    container_name: languagetool
+    ports:
+      - "8010:8010"
+    restart: unless-stopped

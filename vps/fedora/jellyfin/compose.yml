@@ -1,0 +1,19 @@
+services:
+  jellyfin:
+    image: docker.io/jellyfin/jellyfin:latest
+    container_name: jellyfin
+
+    ports:
+      - "8096:8096/tcp"
+      - "7359:7359/udp"
+
+    volumes:
+      - jellyfin-config:/config
+      - jellyfin-cache:/cache
+      - /var/home/user/Music/##Music:/music:ro,Z
+
+    restart: unless-stopped
+
+volumes:
+  jellyfin-config:
+  jellyfin-cache:
