@@ -6,6 +6,16 @@
 podman run --rm -it ghcr.io/leanderziehm/dev-environment:latest bash
 ```
 
+```
+podman run --rm -it --network=host ghcr.io/leanderziehm/dev-environment:latest bash
+podman run --rm -it -p 5000:5000 ghcr.io/leanderziehm/dev-environment:latest bash
+```
+
+```
+podman run --rm -it quay.io/fedora/fedora:latest bash
+```
+
+
 
 ## Others
 
