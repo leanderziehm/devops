@@ -1,6 +1,6 @@
 FROM quay.io/fedora/fedora:latest
 
-RUN dnf install -y neovim make python3 python3-pip npm \
+RUN dnf install -y neovim make python3 python3-pip npm java-21-openjdk-devel \
     && useradd -m -s /bin/bash dev \
     && echo "dev ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/dev \
     && chmod 0440 /etc/sudoers.d/dev
