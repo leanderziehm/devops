@@ -11,7 +11,7 @@ podman run --rm -it ghcr.io/leanderziehm/dev-environment-fedora:latest bash
 ### Git ssh 
 
 ```
-curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/others/git-clone-ssh-quick.sh | bash -s -- git@github.com:leanderziehm/docusaurus_obsidian.git
+bash <(curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/others/git-clone-ssh-quick.sh) git@github.com:leanderziehm/docusaurus_obsidian.git
 ```
 
 ### Setup Devops:
