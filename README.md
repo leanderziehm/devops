@@ -3,21 +3,16 @@
 ## Dev Environment
 
 ```
-podman run --rm -it ghcr.io/leanderziehm/dev-environment:latest bash
+podman run --rm -it ghcr.io/leanderziehm/dev-environment-fedora:latest bash
 ```
-
-```
-podman run --rm -it --network=host ghcr.io/leanderziehm/dev-environment:latest bash
-podman run --rm -it -p 5000:5000 ghcr.io/leanderziehm/dev-environment:latest bash
-```
-
-```
-podman run --rm -it quay.io/fedora/fedora:latest bash
-```
-
-
 
 ## Others
+
+### Git ssh 
+
+```
+curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/others/git-clone-ssh-quick.sh | bash -s -- git@github.com:leanderziehm/docusaurus_obsidian.git
+```
 
 ### Setup Devops:
 ```sh
