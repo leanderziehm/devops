@@ -1,3 +1,4 @@
+
 name: Build dev-environment
 
 on:
@@ -5,9 +6,7 @@ on:
     branches:
       - main
     paths:
-      - ".github/workflows/build-dev-environment.yml"
-      - "others/containers/dev-environment/**"
-
+      - others/containers/dev-environment/Containerfile.fedora
   workflow_dispatch:
 
 permissions:
@@ -17,36 +16,11 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        include:
-          - file: Containerfile
-            image: dev-environment
-            filter_key: default_env
-          - file: Containerfile.fedora
-            image: dev-environment-fedora
-            filter_key: fedora_env
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 1. Path Filter: Detect changes specific to each image
-      - name: Check for changes
-        uses: dorny/paths-filter@v3
-        id: changes
-        with:
-          filters: |
-            default_env:
-              - 'others/containers/dev-environment/Containerfile'
-              - '.github/workflows/build-dev-environment.yml'
-            fedora_env:
-              - 'others/containers/dev-environment/Containerfile.fedora'
-              - '.github/workflows/build-dev-environment.yml'
-
       - name: Log in to GHCR
-        if: steps.changes.outputs[matrix.filter_key] == 'true' || github.event_name == 'workflow_dispatch'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -54,19 +28,16 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Buildx
-        if: steps.changes.outputs[matrix.filter_key] == 'true' || github.event_name == 'workflow_dispatch'
         uses: docker/setup-buildx-action@v3
 
-      # 2. Build & Push with Layer Caching
       - name: Build and push
-        if: steps.changes.outputs[matrix.filter_key] == 'true' || github.event_name == 'workflow_dispatch'
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./others/containers/dev-environment/${{ matrix.file }}
+          file: ./others/containers/dev-environment/Containerfile.fedora
           push: true
           tags: |
-            ghcr.io/leanderziehm/${{ matrix.image }}:latest
-            ghcr.io/leanderziehm/${{ matrix.image }}:${{ github.sha }}
-          cache-from: type=gha,scope=${{ matrix.image }}
-          cache-to: type=gha,mode=max,scope=${{ matrix.image }}
+            ghcr.io/leanderziehm/dev-environment:latest
+            ghcr.io/leanderziehm/dev-environment:${{ github.sha }}
+          cache-from: type=gha,scope=dev-environment-fedora
+          cache-to: type=gha,scope=dev-environment-fedora,mode=max
