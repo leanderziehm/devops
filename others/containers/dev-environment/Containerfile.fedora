@@ -1,6 +1,6 @@
 FROM quay.io/fedora/fedora:latest
 
-RUN dnf install -y neovim python3 python3-pip make npm \
+RUN dnf install -y python3 python3-pip make npm \
     && dnf clean all \
     && rm -rf /var/cache/dnf \
     && useradd -m -s /bin/bash dev \
