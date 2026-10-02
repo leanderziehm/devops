@@ -37,7 +37,7 @@ jobs:
           file: ./others/containers/dev-environment/Containerfile.fedora
           push: true
           tags: |
-            ghcr.io/leanderziehm/dev-environment:latest
-            ghcr.io/leanderziehm/dev-environment:${{ github.sha }}
+            ghcr.io/leanderziehm/dev-environment-fedora:latest
+            ghcr.io/leanderziehm/dev-environment-fedora:${{ github.sha }}
           cache-from: type=gha,scope=dev-environment-fedora
           cache-to: type=gha,scope=dev-environment-fedora,mode=max
