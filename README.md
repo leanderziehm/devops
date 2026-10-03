@@ -2,7 +2,7 @@
 
 ## Dev Environment
 
-```
+```sh
 podman run --rm -it ghcr.io/leanderziehm/dev-environment-fedora:latest bash
 ```
 
@@ -10,36 +10,37 @@ podman run --rm -it ghcr.io/leanderziehm/dev-environment-fedora:latest bash
 
 ### Git ssh 
 
+```sh
+bash <(curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/others/git-clone-ssh-quick.sh) git@github.com:leanderziehm/devops.git
 ```
-bash <(curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/others/git-clone-ssh-quick.sh) git@github.com:leanderziehm/docusaurus_obsidian.git
+
+### VPS
+
+
+you can add this to your .bashrc
+```sh
+gotovps() {
+     cd "$HOME/dev/devops/vps/$(hostname)"
+}
 ```
+
+### Setup Nginx:
+```sh
+curl -O https://raw.githubusercontent.com/LeanderZiehm/devops/refs/heads/main/others/setup-nginx.sh
+```
+
+### Backup Postges:
+```sh
+curl -O https://raw.githubusercontent.com/LeanderZiehm/devops/refs/heads/main/others/backup-postgres.sh
+```
+
+
+
 
 ### Setup Devops:
 ```sh
 curl -O https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/others/setup.sh && bash setup.sh
 ```
-
-## Setup Nginx:
-```sh
-curl -O https://raw.githubusercontent.com/LeanderZiehm/devops/refs/heads/main/others/setup-nginx.sh
-```
-
-## Backup Postges:
-```sh
-curl -O https://raw.githubusercontent.com/LeanderZiehm/devops/refs/heads/main/others/backup-postgres.sh
-```
-
-# Git Key
-```sh
-curl -O https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/gitkey1.py
-```
-
-# Git clone 
-
-```
-git clone 
-```
-then 
 
 ```
 ln -s ~/devops/backup-postgres.sh ~/backup-postgres.sh
