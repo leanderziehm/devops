@@ -1,0 +1,12 @@
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    ports:
+      - 2000:3000
+    volumes:
+      - ./config/services.yaml:/app/config/services.yaml:ro,Z
+      - ./config/bookmarks.yaml:/app/config/bookmarks.yaml:ro,Z
+      - ./config/widgets.yaml:/app/config/widgets.yaml:ro,Z
+    environment:
+      HOMEPAGE_ALLOWED_HOSTS: localhost:2000

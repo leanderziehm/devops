@@ -1,0 +1,22 @@
+---
+- logo:
+    icon: si-fedora
+    # icon: si-homeassistant
+
+- greeting:
+    text_size: xl
+    text: "Fedora"
+
+# - datetime:
+#     text_size: xl
+#     format:
+#       dateStyle: long
+#       timeStyle: short
+
+- resources:
+    cpu: true
+    memory: true
+    disk: /
+    uptime: true
+    cputemp: true
+    network: true
