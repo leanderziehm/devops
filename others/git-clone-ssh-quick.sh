@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # code from: https://github.com/leanderziehm/devops/blob/main/others/git-clone-ssh-quick.sh
+# last edited: 18-10-2026 
 set -e
 # Supports:
 #   git@github.com:username/reponame.git
@@ -95,14 +96,13 @@ fi
 echo "Cloning $REPO_URL..."
 echo
 
-GIT_SSH_COMMAND="ssh -i $SSH_KEY -o IdentitiesOnly=yes" \
-    git clone "$REPO_URL" "$REPO_NAME"
+# GIT_SSH_COMMAND="ssh -i ~/.ssh/github/android-apps -o IdentitiesOnly=yes" git clone git@github.com:leanderziehm/android-apps.git
+GIT_SSH_COMMAND="ssh -i $SSH_KEY -o IdentitiesOnly=yes" git clone "$REPO_URL" "$REPO_NAME"
 
 cd "$REPO_NAME"
 
 # Configure this repository to always use this SSH key
-git config core.sshCommand \
-    "ssh -i $SSH_KEY -o IdentitiesOnly=yes"
+git config core.sshCommand "ssh -i $SSH_KEY -o IdentitiesOnly=yes"
 
 echo
 echo "Done!"
