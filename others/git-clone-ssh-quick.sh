@@ -1,16 +1,58 @@
 #!/usr/bin/env bash
+# code from: https://github.com/leanderziehm/devops/blob/main/others/git-clone-ssh-quick.sh
 set -e
+# Supports:
+#   git@github.com:username/reponame.git
+#   https://github.com/username/reponame.git
+#   https://github.com/username/reponame
 
-# Usage:
-#   ./git-clone-ssh-quick.sh git@github.com:username/reponame.git
-
-if [[ $# -ne 1 ]]; then
-    echo "Usage: $0 <github-ssh-url>"
+# Ask for the repository URL if not provided as an argument
+if [[ $# -eq 0 ]]; then
+    echo
+    read -r -p "Enter the GitHub repository URL: " REPO_URL
+    echo
+elif [[ $# -eq 1 ]]; then
+    REPO_URL="$1"
+else
+    echo "Usage: $0 [github-url]"
     exit 1
 fi
 
-REPO_URL="$1"
-REPO_NAME=$(basename "$REPO_URL" .git)
+# Remove leading/trailing whitespace
+REPO_URL="$(printf '%s' "$REPO_URL" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+
+# Normalize GitHub URLs to SSH format
+case "$REPO_URL" in
+    https://github.com/*)
+        REPO_PATH="${REPO_URL#https://github.com/}"
+        ;;
+    git@github.com:*)
+        REPO_PATH="${REPO_URL#git@github.com:}"
+        ;;
+    *)
+        echo "Error: unsupported GitHub URL."
+        echo "Use an HTTPS or SSH GitHub repository URL."
+        exit 1
+        ;;
+esac
+
+# Remove trailing slash and optional .git suffix
+REPO_PATH="${REPO_PATH%/}"
+
+# Validate owner/repository format
+if [[ ! "$REPO_PATH" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+(\.git)?$ ]]; then
+    echo "Error: invalid GitHub repository path: $REPO_PATH"
+    exit 1
+fi
+
+# Convert to standard SSH URL
+REPO_NAME="${REPO_PATH##*/}"
+REPO_NAME="${REPO_NAME%.git}"
+REPO_URL="git@github.com:${REPO_PATH%.git}.git"
+
+echo "Repository: $REPO_URL"
+echo "Directory:  $REPO_NAME"
+echo
 
 SSH_DIR="$HOME/.ssh/github"
 SSH_KEY="$SSH_DIR/$REPO_NAME"
