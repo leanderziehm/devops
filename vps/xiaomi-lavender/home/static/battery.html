@@ -1,0 +1,132 @@
+ 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Battery | Redmi Note 7</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #fff;
+      color: #222;
+    }
+    header {
+      padding: 22px 6%;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header strong { font-size: 20px; }
+    a { color: #555; text-decoration: none; }
+    a:hover { color: #000; }
+    main { width: min(700px, 90%); margin: 45px auto; }
+    .back { display: inline-block; margin-bottom: 30px; font-size: 14px; }
+    h1 { font-size: clamp(28px, 5vw, 38px); margin: 0 0 10px; }
+    .muted { color: #888; line-height: 1.6; }
+    .card {
+      margin-top: 28px;
+      padding: clamp(22px, 5vw, 38px);
+      border: 1px solid #e8e8e8;
+      border-radius: 16px;
+    }
+    .label { color: #777; font-size: 14px; }
+    .value {
+      margin: 16px 0;
+      font-size: clamp(48px, 12vw, 76px);
+      font-weight: 700;
+      letter-spacing: -3px;
+    }
+    .track {
+      height: 9px;
+      background: #eee;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    .bar {
+      height: 100%;
+      width: 0%;
+      background: #222;
+      border-radius: 20px;
+      transition: width .4s ease;
+    }
+    .status { margin-top: 18px; font-size: 14px; color: #777; }
+    button {
+      margin-top: 22px;
+      border: 1px solid #ddd;
+      background: #fff;
+      padding: 11px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover { background: #f6f6f6; }
+    footer { margin-top: 32px; color: #999; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <header>
+    <strong>Redmi Note 7</strong>
+    <a href="/">Home</a>
+  </header>
+
+  <main>
+    <a class="back" href="/">← Back to dashboard</a>
+    <h1>Battery</h1>
+    <p class="muted">Current battery status from your device.</p>
+
+    <section class="card">
+      <div class="label">Battery capacity</div>
+      <div class="value" id="value">--%</div>
+      <div class="track">
+        <div class="bar" id="bar"></div>
+      </div>
+      <div class="status" id="status" aria-live="polite">Loading battery data...</div>
+      <button id="refresh" type="button">Refresh</button>
+    </section>
+
+    <footer>Data from device API · <span id="updated">Not updated yet</span></footer>
+  </main>
+
+  <script>
+    const API = 'http://172.16.42.1:8000/battery';
+
+    async function loadBattery() {
+      const status = document.getElementById('status');
+      const value = document.getElementById('value');
+      const bar = document.getElementById('bar');
+
+      status.textContent = 'Loading battery data...';
+
+      try {
+        const response = await fetch(API);
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+
+        const data = await response.json();
+        const capacity = Number(data.capacity);
+
+        if (!Number.isFinite(capacity)) {
+          throw new Error('Invalid battery value');
+        }
+
+        const percent = Math.max(0, Math.min(100, capacity));
+        value.textContent = capacity + (data.unit || '%');
+        bar.style.width = percent + '%';
+        status.textContent = 'Battery status received successfully.';
+        document.getElementById('updated').textContent =
+          'Updated at ' + new Date().toLocaleTimeString();
+      } catch (error) {
+        status.textContent =
+          'Could not load battery data. Check your API connection.';
+      }
+    }
+
+    document.getElementById('refresh').addEventListener('click', loadBattery);
+    loadBattery();
+    setInterval(loadBattery, 30000);
+  </script>
+</body>
+</html>

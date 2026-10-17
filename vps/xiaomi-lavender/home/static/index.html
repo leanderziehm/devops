@@ -1,0 +1,76 @@
+ 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redmi Note 7 | Home</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #fff;
+      color: #222;
+    }
+    header {
+      padding: 22px 6%;
+      border-bottom: 1px solid #eee;
+      font-size: 20px;
+      font-weight: 700;
+    }
+    main {
+      width: min(900px, 90%);
+      margin: 60px auto;
+    }
+    h1 { font-size: clamp(28px, 5vw, 42px); margin-bottom: 10px; }
+    p { color: #777; line-height: 1.6; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-top: 32px;
+    }
+    .card {
+      display: block;
+      padding: 26px;
+      border: 1px solid #e8e8e8;
+      border-radius: 14px;
+      color: #222;
+      text-decoration: none;
+      transition: border-color .2s, transform .2s;
+    }
+    .card:hover {
+      border-color: #999;
+      transform: translateY(-3px);
+    }
+    .card h2 { margin: 0 0 12px; font-size: 20px; }
+    .card span { color: #777; font-size: 14px; }
+    footer {
+      margin-top: 50px;
+      color: #999;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <header>Redmi Note 7</header>
+  <main>
+    <h1>Device dashboard</h1>
+    <p>Welcome to your phone status dashboard.</p>
+
+    <div class="grid">
+      <a class="card" href="/battery.html">
+        <h2>Battery</h2>
+        <span>View current battery level →</span>
+      </a>
+      <a class="card" href="/brightness.html">
+        <h2>Brightness</h2>
+        <span>View current screen brightness →</span>
+      </a>
+    </div>
+
+    <footer>Redmi Note 7 · Device status</footer>
+  </main>
+</body>
+</html>
