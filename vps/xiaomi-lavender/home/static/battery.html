@@ -92,7 +92,9 @@
   </main>
 
   <script>
-    const API = 'http://172.16.42.1:8000/battery';
+      const targetUrl = new URL(window.location.href);
+      targetUrl.port = targetPort;
+      const API = new URL('/battery', targetUrl).href;
 
     async function loadBattery() {
       const status = document.getElementById('status');

@@ -92,7 +92,9 @@
   </main>
 
   <script>
-    const API = 'http://172.16.42.1:8000/brightness';
+      const targetUrl = new URL(window.location.href);
+      targetUrl.port = targetPort;
+      const API = new URL('/brightness', targetUrl).href;
 
     async function loadBrightness() {
       const status = document.getElementById('status');
