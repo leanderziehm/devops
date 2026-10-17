@@ -93,7 +93,7 @@
 
   <script>
       const targetUrl = new URL(window.location.href);
-      targetUrl.port = targetPort;
+      targetUrl.port = 8000;
       const API = new URL('/brightness', targetUrl).href;
 
     async function loadBrightness() {
