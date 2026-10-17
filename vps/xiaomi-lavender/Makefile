@@ -1,6 +1,6 @@
-home:
+h home:
 	cd home && make
 
-device_api:
+d device_api:
 	cd device-api && make
 
