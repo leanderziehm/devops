@@ -2,7 +2,7 @@ nginx-logs/test-nginx-logs
 temp
 *.qcow2
 *.iso
-archive
+aarchive
 tfplan
 *.json
 dev
