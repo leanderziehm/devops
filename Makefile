@@ -7,7 +7,7 @@ bp backup_postgres:
 sn setup-nginx:
 	bash scripts/setup-nginx.sh
 
-st setup-termux
+st setup-termux:
 	bash scripts/setups/setup-termux.sh
 
 nt ntfy notify:
