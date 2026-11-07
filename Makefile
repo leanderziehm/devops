@@ -1,3 +1,6 @@
+sd sdf setupdotfiles:
+	bash dotfiles/setup-dotfiles.sh
+
 v vps:
 	cd vps && cd $$(hostname) && ls && make
 
@@ -8,7 +11,10 @@ sn setup-nginx:
 	bash scripts/setup-nginx.sh
 
 st setup-termux:
-	bash scripts/setups/setup-termux.sh
+	bash setup/setup-termux.sh
 
-nt ntfy notify:
+n nt ntfy notify:
 	bash scripts/utils/notify.sh "test :)"
+
+q qr qrcode:
+	python scripts/utils/qrcode-gen.py

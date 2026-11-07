@@ -1,0 +1,1 @@
+bash ../dotenv/setup-dotenv.sh
