@@ -11,7 +11,7 @@ sn setup-nginx:
 	bash scripts/setup-nginx.sh
 
 st setup-termux:
-	bash setup/setup-termux.sh
+	bash setups/setup-termux.sh
 
 n nt ntfy notify:
 	bash scripts/utils/notify.sh "test :)"
