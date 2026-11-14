@@ -1,21 +1,17 @@
 # Devops
 
+
+# linux isos:
+
+https://www.debian.org/distrib/
+https://rockylinux.org/download
+
+
 ## Dev Environment
 
 ```sh
 podman run --rm -it ghcr.io/leanderziehm/dev-environment-fedora:latest bash
 ```
-
-## Others
-
-### Git ssh 
-
-```sh
-bash <(curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/others/git-clone-ssh-quick.sh) git@github.com:leanderziehm/devops.git
-```
-
-tood update this
-
 ### VPS
 
 
