@@ -6,8 +6,8 @@ set -e
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
 # Copy configuration files if they don't exist
-[[ -f ~/.bashrc.devops ]] || cp "$SCRIPT_DIR/.bashrc" ~/.bashrc.devops
-[[ -f ~/.vimrc.devops ]] || cp "$SCRIPT_DIR/.vimrc" ~/.vimrc.devops
+[[ -f ~/.bashrc.devops ]] || cp "$SCRIPT_DIR/.bashrc" ~/.bashrc.devops && echo "added to ~/.bashrc"
+[[ -f ~/.vimrc.devops ]] || cp "$SCRIPT_DIR/.vimrc" ~/.vimrc.devops && echo "added to ~/.vimrc"
 
 # Ensure main configuration files exist
 touch ~/.bashrc
