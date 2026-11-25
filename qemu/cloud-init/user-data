@@ -1,0 +1,64 @@
+#cloud-config
+users:
+  - name: root
+    lock_passwd: false
+    plain_text_passwd:  rootroot
+
+  - name: roots
+    shell: /bin/bash
+    groups: wheel
+    lock_passwd: false
+    plain_text_passwd: rootroot
+  
+  - name: admin
+    shell: /bin/bash
+    # Adds user to the wheel group (standard for AlmaLinux/Fedora sudo access)
+    groups: wheel
+    # Grants full sudo privileges. Remove NOPASSWD if you want a password prompt.
+    sudo: "ALL=(ALL) NOPASSWD:ALL"
+    lock_passwd: true
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NT...put_you_ssh_key_here pc@user
+
+  - name: user
+    shell: /bin/bash
+    lock_passwd: true
+    sudo: null
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NT...put_you_ssh_key_here pc@user
+ssh_pwauth: true
+chpasswd:
+  expire: false
+
+packages:
+  - podman
+  - git
+
+runcmd:
+  - sudo -u admin bash -c "echo \"Cloudinit runcmd ran on $(date)\" >> /home/admin/cloudinit_runcmd.log"
+  - sudo -u admin bash -c "echo \"TODO implement ansible and terraform. \" >> /home/admin/cloudinit_runcmd.log"
+  - sudo -u admin bash -c "mkdir -p /opt/lz && git -C /opt/lz clone https://github.com/leanderziehm/devops && bash /opt/lz/devops/vms/setup.sh"
+  - >-
+    curl -X 'POST' 'https://notify.leanderziehm.com/notify/me' -H 'accept: */*' -H 'Content-Type: application/json' -d '{ "text": "hello from vm2" }'
+  - |
+    set -e
+    HOSTNAME=$(hostname)
+    FQDN=$(hostname -f 2>/dev/null || hostname)
+    IPV4=$(hostname -I | awk '{print $1}')
+    IPV6=$(hostname -I | awk '{print $2}')
+    INSTANCE_ID=$(cloud-init query instance_id 2>/dev/null || echo unknown)
+    REGION=$(cloud-init query region 2>/dev/null || echo unknown)
+    IMAGE=$(cloud-init query --format '{{ v1.cloud_name }}' 2>/dev/null || echo unknown)
+    TEXT="VM initialized
+      hostname: ${HOSTNAME}
+      fqdn: ${FQDN}
+      ipv4: ${IPV4}
+      ipv6: ${IPV6:-n/a}
+      instance_id: ${INSTANCE_ID}
+      region: ${REGION}
+      cloud: ${IMAGE}
+      time: $(date -u +%FT%TZ)"
+    curl -sS -X POST 'https://notify.leanderziehm.com/notify/me' \
+      -H 'accept: */*' \
+      -H 'Content-Type: application/json' \
+      --data "$(jq -n --arg text "$TEXT" '{text: $text}')"
