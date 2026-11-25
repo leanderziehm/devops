@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
-# source: https://github.com/leanderziehm/devops/main/scripts/utils/notify.sh
-# dependency: npm  
-# todo:maybe swap out with python3 as dependency instead. not sure yet. 
 set -euo pipefail
 
 if [[ $# -eq 0 ]]; then
@@ -9,17 +6,67 @@ if [[ $# -eq 0 ]]; then
     exit 1
 fi
 
-if ! command -v node >/dev/null 2>&1; then
-    echo "Error: Node.js is required but not installed." >&2
-    echo "Install it using: pkg install nodejs" >&2
+message="$*"
+
+send_notify() {
+    curl -sS -X POST 'https://notify.leanderziehm.com/notify/me' \
+        -H 'accept: */*' \
+        -H 'Content-Type: application/json' \
+        -d "$1"
+}
+
+# Characters that require JSON escaping: \ " and any control char (0x00–0x1F, 0x7F)
+if [[ "$message" != *[\\\"]* && ! "$message" =~ [[:cntrl:]] ]]; then
+    # Nothing to escape — send as-is
+    send_notify "{ \"text\": \"$message\" }"
+    exit 0
+fi
+
+# Message contains something that needs escaping
+if command -v jq >/dev/null 2>&1; then
+    payload=$(jq -n --arg text "$message" '{text: $text}')
+    send_notify "$payload"
+    exit 0
+fi
+
+# after the jq check, before manual escaping:
+if [[ "$message" =~ [[:cntrl:]] ]]; then
+    echo "notify: message contains control chars and jq is unavailable" >&2
     exit 1
 fi
 
-message="$*"
-payload=$(node -p 'JSON.stringify({ text: process.argv[1] })' "$message")
+# Fallback: manual escaping
+escaped=${message//\\/\\\\}
+escaped=${escaped//\"/\\\"}
+escaped=${escaped//$'\n'/\\n}
+escaped=${escaped//$'\r'/\\r}
+escaped=${escaped//$'\t'/\\t}
+escaped=${escaped//$'\b'/\\b}
+escaped=${escaped//$'\f'/\\f}
 
-curl --fail --silent --show-error \
-    -X POST 'https://notify.leanderziehm.com/notify/me' \
-    -H 'accept: */*' \
-    -H 'Content-Type: application/json' \
-    -d "$payload"
+send_notify "{ \"text\": \"$escaped\" }"
+
+# message="$*"
+# curl -X 'POST' 'https://notify.leanderziehm.com/notify/me' -H 'accept: */*' -H 'Content-Type: application/json' -d "{ \"text\": \"$message\" }"
+# ##### escape
+# # Escape backslashes first, then double quotes, then control chars
+# escaped=${message//\\/\\\\}      # \  -> \\
+# escaped=${escaped//\"/\\\"}      # "  -> \"
+# escaped=${escaped//$'\n'/\\n}    # newline -> \n
+# escaped=${escaped//$'\r'/\\r}    # CR -> \r
+# escaped=${escaped//$'\t'/\\t}    # tab -> \t
+# curl -X POST 'https://notify.leanderziehm.com/notify/me' \
+#     -H 'accept: */*' \
+#     -H 'Content-Type: application/json' \
+#     -d "{ \"text\": \"$escaped\" }"
+
+# ##### jq
+# message="$*"
+# payload=$(jq -n --arg text "$message" '{text: $text}')
+# curl -X POST 'https://notify.leanderziehm.com/notify/me' \
+#     -H 'accept: */*' \
+#     -H 'Content-Type: application/json' \
+#     -d "$payload"
+# #####
+
+# source: https://github.com/leanderziehm/devops/main/scripts/utils/notify.sh
