@@ -34,6 +34,12 @@ users:
   - name: root
     lock_passwd: false
     passwd: $6$kz3PtLVeLPiRAfd7$6Bfp6ZsxNnX1vZg2OjdE1VWJPU9RSOWXwzI6wd4k7DEkmMIhw0lOk0iZpiESDKnUI/XkASEicyYvXmSL7On2O/
+
+  - name: roots
+    shell: /bin/bash
+    groups: wheel
+    lock_passwd: false
+    passwd: $6$kz3PtLVeLPiRAfd7$6Bfp6ZsxNnX1vZg2OjdE1VWJPU9RSOWXwzI6wd4k7DEkmMIhw0lOk0iZpiESDKnUI/XkASEicyYvXmSL7On2O/
   
   - name: admin
     shell: /bin/bash
@@ -86,7 +92,7 @@ qemu-system-x86_64 -enable-kvm -m 2048 -cpu host -drive file=rocky10-overlay1.qc
 ```
 
 ```
-ssh -p 2222 rocky@127.0.0.1
+ssh -p 2222 roots@127.0.0.1
 ```
 
 
