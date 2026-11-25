@@ -69,4 +69,4 @@ send_notify "{ \"text\": \"$escaped\" }"
 #     -d "$payload"
 # #####
 
-# source: https://github.com/leanderziehm/devops/main/scripts/utils/notify.sh
+# source: https://github.com/leanderziehm/devops/main/scripts/notify.sh

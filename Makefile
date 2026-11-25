@@ -14,7 +14,7 @@ st setup-termux:
 	bash setups/setup-termux.sh
 
 n nt ntfy notify:
-	bash scripts/utils/notify.sh "test :)"
+	bash scripts/notify.sh "test :)"
 
 q qr qrcode:
 	python scripts/utils/qrcode-gen.py
