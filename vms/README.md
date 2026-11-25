@@ -1,6 +1,3 @@
-
-
-
 # 1. Download linux vm image:
 
 run one of the commandds
@@ -19,7 +16,7 @@ qemu-img create -f qcow2 -b rocky10.qcow2 -F qcow2 rocky10-overlay1.qcow2
 # 3. Run once with cloudinit
 
 
-generate password hash:
+generate root password hash:
 ```
 openssl passwd -6 'rootroot'
 ```
@@ -37,6 +34,16 @@ users:
   - name: root
     lock_passwd: false
     passwd: $6$kz3PtLVeLPiRAfd7$6Bfp6ZsxNnX1vZg2OjdE1VWJPU9RSOWXwzI6wd4k7DEkmMIhw0lOk0iZpiESDKnUI/XkASEicyYvXmSL7On2O/
+  
+  - name: admin
+    shell: /bin/bash
+    # Adds user to the wheel group (standard for AlmaLinux/Fedora sudo access)
+    groups: wheel
+    # Grants full sudo privileges. Remove NOPASSWD if you want a password prompt.
+    sudo: "ALL=(ALL) NOPASSWD:ALL"
+    lock_passwd: true
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NT...put_you_ssh_key_here pc@user
 
   - name: user
     shell: /bin/bash
