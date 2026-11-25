@@ -18,27 +18,36 @@ qemu-img create -f qcow2 -b rocky10.qcow2 -F qcow2 rocky10-overlay1.qcow2
 
 # 3. Run once with cloudinit
 
+
+generate password hash:
+```
+openssl passwd -6 'rootroot'
+```
+
 setup cloud init config files:
 ```
-# meta-data
 cat > meta-data <<'EOF'
 instance-id: rocky10-cloud-01
 local-hostname: rocky10-vm
 EOF
 
-# user-data
 cat > user-data <<'EOF'
 #cloud-config
-password: rootroot
+users:
+  - name: root
+    lock_passwd: false
+    passwd: $6$kz3PtLVeLPiRAfd7$6Bfp6ZsxNnX1vZg2OjdE1VWJPU9RSOWXwzI6wd4k7DEkmMIhw0lOk0iZpiESDKnUI/XkASEicyYvXmSL7On2O/
+
+  - name: user
+    shell: /bin/bash
+    lock_passwd: true
+    sudo: null
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NT...put_you_ssh_key_here pc@user
+ssh_pwauth: true
 chpasswd:
   expire: false
-ssh_pwauth: true
 EOF
-
-# view 
-cat meta-data
-cat user-data
-
 ```
 
 create cloud init seed iso:
@@ -60,7 +69,7 @@ systemctl status sshd
 
 if sshd is enabled and running run this command outside of vm check if you can get in: (each linux distro has other default usernames: rocky,almalinux,fedora,debain) 
 ```
-ssh -p 2222 rocky@127.0.0.1
+ssh -p 2222 root@127.0.0.1
 ```
 
 
@@ -175,7 +184,26 @@ qemu-img resize debian-overlay.qcow2 +10G
 you can also use virtual machine manager virsh as a gui and abstraction layer above qemu. 
 
 
+# check if cloud init is valid
 
+
+```
+sudo cloud-init schema --config-file user-data --annotate
+```
+
+
+# check if yml is valid
+
+```
+python3 -c 'import yaml, sys; yaml.safe_load(open(sys.argv[1]))' ./meta-data
+
+python3 -c 'import yaml, sys; f=sys.argv[1]; content=open(f).read(); yaml.safe_load(content); print(f"ALL GOOD: {f} is valid:\n{content}")' ./meta-data
+```
+
+```
+ruby -ryaml -e "YAML.load_file('meta-data')"
+ruby -ryaml -e "f='meta-data'; YAML.safe_load_file(f); puts \"ALL GOOD: #{f} is valid:\n#{File.read(f)}\""
+```
 
 
 ---
