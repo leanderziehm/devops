@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 REPO="/opt/lz/devops/"
 VMS_DIR="/opt/lz/devops/vm"
@@ -11,4 +11,4 @@ echo "VMS_DIR: $VMS_DIR"
 
 export REPO VMS_DIR NOTIFY_SCRIPT UPDATE_SCRIPT
 
-bash $NOTIFY_SCRIPT --echo --log "$(hostname -s): Environment Loaded"
+bash "$NOTIFY_SCRIPT" --echo --log "$(hostname -s): Environment Loaded"
