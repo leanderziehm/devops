@@ -4,6 +4,8 @@ sudo git -C /opt/lz/devops pull
 sudo bash /opt/lz/devops/vms/setup.sh
 
 
+curl -X 'POST' 'https://notify.leanderziehm.com/notify/me' -H 'accept: */*' -H 'Content-Type: application/json' -d "{ \"text\": \"$(hostname): setup-devops.sh ran with user: $(whoami)\" }"
+
 # sudo install -d -o admin -g admin -m 755 /opt/lz
 # sudo -u admin -c "git clone https://github.com/leanderziehm/devops /opt/lz/devops"
 # sudo -u admin -c "bash /opt/lz/devops/vms/setup.sh"
