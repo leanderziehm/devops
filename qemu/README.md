@@ -139,6 +139,89 @@ use ssh with ssh key:
 ssh -p 2222 admin@127.0.0.1
 ```
 
+# 4.2 Tap networking:
+
+
+```
+# Create TAP interface
+sudo ip tuntap add dev tap0 mode tap user "$USER"
+sudo ip addr add 192.168.100.1/24 dev tap0
+sudo ip link set tap0 up
+
+
+sudo ip link set tap0 down
+sudo ip tuntap del dev tap0 mode tap
+
+sudo ip tuntap add dev tap0 mode tap user thesis
+sudo ip addr add 192.168.100.1/24 dev tap0
+sudo ip link set tap0 up
+
+# Enable IP forwarding
+echo "net.ipv4.ip_forward=1" | sudo tee /etc/sysctl.d/99-qemu-forward.conf
+sudo sysctl --system
+
+# Configure firewalld
+sudo firewall-cmd --permanent --zone=trusted --add-interface=tap0
+sudo firewall-cmd --permanent --zone=trusted --add-masquerade
+sudo firewall-cmd --reload
+
+
+
+# Create a forwarding policy from TAP to internet
+sudo firewall-cmd --permanent --new-policy=qemu-tap
+
+# Define incoming and outgoing zones
+sudo firewall-cmd --permanent --policy=qemu-tap \
+  --add-ingress-zone=trusted
+
+sudo firewall-cmd --permanent --policy=qemu-tap \
+  --add-egress-zone=FedoraWorkstation
+
+# Allow forwarding
+sudo firewall-cmd --permanent --policy=qemu-tap \
+  --set-target=ACCEPT
+
+# Enable NAT/masquerading
+sudo firewall-cmd --permanent --policy=qemu-tap \
+  --add-masquerade
+
+# Apply configuration
+sudo firewall-cmd --reload
+```
+
+```
+qemu-system-x86_64 \
+  -enable-kvm \
+  -m 2048 \
+  -cpu host \
+  -drive file=rocky10-overlay1.qcow2,if=virtio,format=qcow2 \
+  -netdev tap,id=net0,ifname=tap0,script=no,downscript=no \
+  -device virtio-net-pci,netdev=net0 \
+  -cdrom seed.iso -nographic
+```
+
+```
+ssh admin@192.168.100.2
+```
+
+```
+# Remove TAP interface
+sudo ip link set tap0 down
+sudo ip tuntap del dev tap0 mode tap
+
+# Remove firewalld configuration
+sudo firewall-cmd --permanent --zone=trusted --remove-interface=tap0
+sudo firewall-cmd --permanent --zone=trusted --remove-masquerade
+sudo firewall-cmd --reload
+
+# Remove persistent IP forwarding configuration
+sudo rm -f /etc/sysctl.d/99-qemu-forward.conf
+
+# Disable IP forwarding (if you enabled it only for QEMU)
+sudo sysctl -w net.ipv4.ip_forward=0
+```
+
+
 # security considerations:
 todo: firewall ip securiyt
 

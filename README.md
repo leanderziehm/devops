@@ -13,6 +13,10 @@ curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main
 ```
 
 ```
+curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/scripts/notify.sh | bash -s -- --echo "Hello from Rocky 10!"
+```
+
+```
 sudo -u podmanager podman ps
 ```
 
