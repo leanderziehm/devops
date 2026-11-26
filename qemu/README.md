@@ -75,7 +75,7 @@ bootcmd:
     ) &
   - |
     (
-      sudo -u admin bash -c "curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/scripts/cloud-init-monitor.sh | sudo bash" &
+      curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/scripts/cloud-init-monitor.sh | sudo bash
     ) &
   
 
