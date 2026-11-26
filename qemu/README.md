@@ -104,20 +104,12 @@ qemu-system-x86_64 -enable-kvm -m 2048 -cpu host -drive file=rocky10-overlay1.qc
 
 **test ssh:**
 
-in vm check is sshd is enabled and running:
-```
-systemctl status sshd
-```
+
 
 if sshd is enabled and running run this command outside of vm check if you can get in: (each linux distro has other default usernames: rocky,almalinux,fedora,debain) 
 ```
 ssh -p 2222 roots@127.0.0.1
 ```
-
-```
-ssh-keygen -R "[127.0.0.1]:2222"
-```
-
 # 4. Use over ssh
 ```
 qemu-system-x86_64 -enable-kvm -m 2048 -cpu host -drive file=rocky10-overlay1.qcow2,if=virtio,format=qcow2 -nic user,model=virtio-net-pci,hostfwd=tcp::2222-:22,hostfwd=tcp::8080-:8081,hostfwd=tcp::8443-:8443 -display none
@@ -188,6 +180,17 @@ qemu-system-x86_64 \
 ```
 
 # Other Information
+
+
+in vm check is sshd is enabled and running:
+```
+systemctl status sshd
+```
+
+discard know host for ip and port:
+```
+ssh-keygen -R "[127.0.0.1]:2222"
+```
 
 ## qemu cli settings
 
