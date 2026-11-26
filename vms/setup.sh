@@ -3,10 +3,8 @@ sudo git -C /opt/lz clone https://github.com/leanderziehm/devops
 sudo git -C /opt/lz/devops config core.fileMode false
 sudo git -C /opt/lz/devops pull
 sudo bash /opt/lz/devops/vms/update.sh
-
 echo "enable linger"
 sudo loginctl enable-linger "$USER"
-
 curl -X 'POST' 'https://notify.leanderziehm.com/notify/me' -H 'accept: */*' -H 'Content-Type: application/json' -d "{ \"text\": \"$(hostname): setup-devops.sh ran with user: $(whoami)\" }"
 
 

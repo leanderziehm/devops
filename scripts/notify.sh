@@ -63,6 +63,7 @@ send_notify "{ \"text\": \"$escaped\" }"
 
 
 # message="$*"
+# curl -X 'POST' 'https://notify.leanderziehm.com/notify/me' -H 'accept: */*' -H 'Content-Type: application/json' -d '{ "text": "cloud-init of a qemu vm is running now." }'
 # curl -X 'POST' 'https://notify.leanderziehm.com/notify/me' -H 'accept: */*' -H 'Content-Type: application/json' -d "{ \"text\": \"$message\" }"
 # ##### escape
 # # Escape backslashes first, then double quotes, then control chars

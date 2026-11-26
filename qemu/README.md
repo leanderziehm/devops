@@ -63,10 +63,7 @@ packages:
 
 runcmd:
   - sudo timedatectl set-timezone Europe/Berlin
-  - sudo -u admin bash -c "echo \"Cloudinit runcmd ran on $(date) TODO implement ansible and terraform.\" >> /home/admin/cloudinit_runcmd.log"
-  - sudo -u admin bash -c "bash <(curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/scripts/setup-devops.sh)"
-  - >-
-    curl -X 'POST' 'https://notify.leanderziehm.com/notify/me' -H 'accept: */*' -H 'Content-Type: application/json' -d '{ "text": "cloud-init of a qemu vm is running now." }'
+  - sudo -u admin bash -c "bash <(curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/vms/setup.sh)"
   - |
     set -e
     HOSTNAME=$(hostname)
@@ -76,7 +73,7 @@ runcmd:
     INSTANCE_ID=$(cloud-init query instance_id 2>/dev/null || echo unknown)
     REGION=$(cloud-init query region 2>/dev/null || echo unknown)
     IMAGE=$(cloud-init query --format '{{ v1.cloud_name }}' 2>/dev/null || echo unknown)
-    TEXT="qemu cloudinit runcmd last command. VM initialized
+    TEXT="qemu cloudinit runcmd finished. VM initialized
       hostname: ${HOSTNAME}
       fqdn: ${FQDN}
       ipv4: ${IPV4}
