@@ -63,11 +63,8 @@ packages:
 
 runcmd:
   - sudo timedatectl set-timezone Europe/Berlin
-  - sudo loginctl enable-linger admin
-  - sudo -u admin bash -c "echo \"Cloudinit runcmd ran on $(date)\" >> /home/admin/cloudinit_runcmd.log"
-  - sudo -u admin bash -c "echo \"TODO implement ansible and terraform. \" >> /home/admin/cloudinit_runcmd.log"
-  - sudo -u admin bash -c "sudo mkdir -p /opt/lz && sudo git -C /opt/lz clone https://github.com/leanderziehm/devops"
-  - sudo -u admin bash -c "bash /opt/lz/devops/vms/setup.sh"
+  - sudo -u admin bash -c "echo \"Cloudinit runcmd ran on $(date) TODO implement ansible and terraform.\" >> /home/admin/cloudinit_runcmd.log"
+  - sudo -u admin bash -c "bash <(curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/scripts/setup-devops.sh)"
   - >-
     curl -X 'POST' 'https://notify.leanderziehm.com/notify/me' -H 'accept: */*' -H 'Content-Type: application/json' -d '{ "text": "cloud-init of a qemu vm is running now." }'
   - |
