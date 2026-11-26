@@ -1,5 +1,5 @@
 sudo mkdir -p /opt/lz
-sudo git -C /opt/lz/devops clone  https://github.com/leanderziehm/devops /opt/lz/devops
+sudo git -C /opt/lz/devops clone ttps://github.com/leanderziehm/devops
 sudo git -C /opt/lz/devops pull
 sudo bash /opt/lz/devops/vms/setup.sh
 
