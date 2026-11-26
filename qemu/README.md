@@ -71,10 +71,17 @@ bootcmd:
       curl -fsS --connect-timeout 3 --max-time 10 \
         -X POST 'https://notify.leanderziehm.com/notify/me' \
         -H 'Content-Type: application/json' \
-        --data "{\"text\":\"VM booting: ${HOSTNAME} | IPv4: ${IPV4} | Instance: ${INSTANCE_ID}\"}"
+        --data "{\"text\":\"VM started. You can connect over ssh now. ${HOSTNAME} | IPv4: ${IPV4} | Instance: ${INSTANCE_ID}\"}"
     ) &
+  - |
+    (
+      sudo -u admin bash -c "curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/scripts/cloud-init-monitor.sh | sudo bash" &
+    ) &
+  
 
 runcmd:
+  - >-
+    curl --silent --show-error --fail --max-time 10 -X POST 'https://notify.leanderziehm.com/notify/me' -H 'accept: */*' -H 'Content-Type: application/json' -d "{\"text\":\"$(hostname): cloud-init runcmd just started.\"}"
   - sudo timedatectl set-timezone Europe/Berlin
   - sudo -u admin bash -c "curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/vm/setup.sh | sudo bash"
   - |
