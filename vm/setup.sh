@@ -1,11 +1,50 @@
-sudo mkdir -p /opt/lz
-sudo git -C /opt/lz clone https://github.com/leanderziehm/devops
-sudo git -C /opt/lz/devops config core.fileMode false
-sudo git -C /opt/lz/devops pull
-sudo bash /opt/lz/devops/vm/update.sh
-echo "enable linger"
-sudo loginctl enable-linger "$USER"
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ $EUID -ne 0 ]]; then
+    echo "Please run with sudo: sudo $0"
+    exit 1
+fi
+
+# setup rootless podman user
+PODMAN_USER="podmanager"
+if ! id "$PODMAN_USER" &>/dev/null; then
+    echo "Creating user: $PODMAN_USER"
+    useradd --create-home --shell /bin/bash "$PODMAN_USER"
+else
+    echo "User already exists: $PODMAN_USER"
+fi
+loginctl enable-linger "$PODMAN_USER"
+
+## setup git repo:
+
+ADMIN_USER="admin"
+REPO="/opt/lz/devops"
+REPO_URL="https://github.com/leanderziehm/devops"
+
+install -d -o "$ADMIN_USER" -g "$ADMIN_USER" -m 755 /opt/lz
+
+if [[ -d "$REPO/.git" ]]; then
+    sudo -u "$ADMIN_USER" -H git -C "$REPO" pull --ff-only
+else
+    sudo -u "$ADMIN_USER" -H git clone "$REPO_URL" "$REPO"
+fi
+
+sudo -u "$ADMIN_USER" -H git -C "$REPO" config core.fileMode false
+
+sudo bash "$REPO/vm/update.sh"
+
 curl -X 'POST' 'https://notify.leanderziehm.com/notify/me' -H 'accept: */*' -H 'Content-Type: application/json' -d "{ \"text\": \"$(hostname): setup-devops.sh ran with user: $(whoami)\" }"
+
+
+# old sudo version
+# sudo mkdir -p /opt/lz
+# sudo git -C /opt/lz clone https://github.com/leanderziehm/devops
+# sudo git -C /opt/lz/devops config core.fileMode false
+# sudo git -C /opt/lz/devops pull
+# sudo bash /opt/lz/devops/vm/update.sh
+# echo "enable linger"
+# sudo loginctl enable-linger "$USER"
 
 
 # tools: firewalld.

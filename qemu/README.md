@@ -89,7 +89,12 @@ runcmd:
 EOF
 ```
 
-create cloud init seed iso:
+Optional: check if cloud init user-data config is valid
+```
+sudo cloud-init schema --config-file user-data --annotate
+```
+
+Manditory: create cloud init seed iso:
 ```
 genisoimage -output seed.iso -volid cidata -joliet -rock user-data meta-data
 ```
@@ -99,15 +104,11 @@ run qemu with seed.iso:
 qemu-system-x86_64 -enable-kvm -m 2048 -cpu host -drive file=rocky10-overlay1.qcow2,if=virtio,format=qcow2 -netdev user,id=net0,hostfwd=tcp::2222-:22 -device virtio-net-pci,netdev=net0 -cdrom seed.iso
 ```
 
-**test ssh:**
-
-
-
-if sshd is enabled and running run this command outside of vm check if you can get in: (each linux distro has other default usernames: rocky,almalinux,fedora,debain) 
+if sshd is enabled you can connect over ssh: 
 ```
 ssh -p 2222 roots@127.0.0.1
 ```
-# 4. Use over ssh
+# 4. Better qemu command to connect only over ssh
 ```
 qemu-system-x86_64 -enable-kvm -m 2048 -cpu host -drive file=rocky10-overlay1.qcow2,if=virtio,format=qcow2 -nic user,model=virtio-net-pci,hostfwd=tcp::2222-:22,hostfwd=tcp::8080-:8081,hostfwd=tcp::8443-:8443 -display none
 ```
@@ -133,7 +134,6 @@ download the sh scrip in this github repo and run it (on rhel linux: fedora,rock
 ```
 bash ./setup-network.sh
 ```
-
 ## Strip unnecessary hardware. 
 Use -nodefaults to prevent QEMU from loading default devices (such as sound cards, floppy controllers, parallel ports, and unnecessary USB controllers) that you do not need, drastically reducing the code paths the guest can interact with.
 
@@ -149,8 +149,6 @@ Enforce strict CPU and memory limits (using -m and host cgroups) so a fork bomb 
 ## Avoid hardware passthrough. 
 Do not pass through physical USB devices or PCI hardware (VFIO) to an infected guest, as malware can flash malicious firmware onto the physical device itself.
 
-
-
 ## Use secure cli parameters:
 
 Strip unnecessary hardware.  =  -nodefaults
@@ -158,7 +156,6 @@ Strip unnecessary hardware.  =  -nodefaults
 • Disable host-guest bridges. Never use shared folders (virtio-9p, virtio-fs, or -drive file=fat:rw:...), clipboard sharing (SPICE agent), or drag-and-drop features. Malware can traverse shared directories or exploit parsing bugs in clipboard handlers.
 
 -sandbox on,obsolete=deny,elevateprivileges=deny,spawn=deny,resourcecontrol=deny
-
 
 ```
 qemu-system-x86_64 \
@@ -178,16 +175,17 @@ qemu-system-x86_64 \
 
 # Other Information
 
+discard know host for ip and port:
+```
+ssh-keygen -R "[127.0.0.1]:2222"
+```
+
 
 in vm check is sshd is enabled and running:
 ```
 systemctl status sshd
 ```
 
-discard know host for ip and port:
-```
-ssh-keygen -R "[127.0.0.1]:2222"
-```
 
 ## qemu cli settings
 

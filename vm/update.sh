@@ -1,25 +1,96 @@
+
 #!/usr/bin/env bash
 set -euo pipefail
-# Load environment variables
-source "$(dirname "${BASH_SOURCE[0]}")/environment.sh"
 
-bash $NOTIFY_SCRIPT "$(hostname): update using update.sh as user $(whoami)"
+# --------------------------------------------------
+# CONFIGURATION
+# --------------------------------------------------
 
-git -C /opt/lz/devops pull
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
-# todo maybe detech if there where any changes in git and if so then deploy only on changes 
+source "$SCRIPT_DIR/environment.sh"
 
-# setup systemd
-sudo cp /opt/lz/devops/vm/systemd/devops-update.service /etc/systemd/system/
-sudo cp /opt/lz/devops/vm/systemd/devops-update.timer /etc/systemd/system/
-sudo cp /opt/lz/devops/vm/systemd/on-startup.service /etc/systemd/system/
-sudo chmod +x /opt/lz/devops/vm/update.sh
-sudo chmod +x /opt/lz/devops/vm/on-startup.sh
+ADMIN_USER="admin"
+PODMAN_USER="podmanager"
 
-sudo systemctl daemon-reload
-sudo systemctl enable --now devops-update.timer
+REPO="/opt/lz/devops"
+REPO_URL="https://github.com/leanderziehm/devops"
 
-### CONTAINERS:
+# This script requires root for system-level operations.
+if [[ $EUID -ne 0 ]]; then
+    echo "Please run with sudo: sudo $0"
+    exit 1
+fi
+
+ADMIN_HOME="$(getent passwd "$ADMIN_USER" | cut -d: -f6)"
+PODMAN_HOME="$(getent passwd "$PODMAN_USER" | cut -d: -f6)"
+PODMAN_UID="$(id -u "$PODMAN_USER")"
+PODMAN_GID="$(id -g "$PODMAN_USER")"
+
+if [[ -z "$ADMIN_HOME" || -z "$PODMAN_HOME" ]]; then
+    echo "Required user does not exist"
+    exit 1
+fi
+
+PODMAN_RUNTIME="/run/user/$PODMAN_UID"
+
+# --------------------------------------------------
+# HELPER FUNCTIONS
+# --------------------------------------------------
+
+notify() {
+    bash "$NOTIFY_SCRIPT" "$@"
+}
+
+run_podmanager() {
+    sudo -u "$PODMAN_USER" \
+        env \
+        HOME="$PODMAN_HOME" \
+        USER="$PODMAN_USER" \
+        LOGNAME="$PODMAN_USER" \
+        XDG_RUNTIME_DIR="$PODMAN_RUNTIME" \
+        DBUS_SESSION_BUS_ADDRESS="unix:path=$PODMAN_RUNTIME/bus" \
+        "$@"
+}
+
+# --------------------------------------------------
+# NOTIFY
+# --------------------------------------------------
+
+notify "$(hostname): update using update.sh as user $(whoami)"
+
+# --------------------------------------------------
+# UPDATE GIT REPOSITORY AS ADMIN
+# --------------------------------------------------
+
+notify "Updating DevOps repository..."
+
+sudo -u "$ADMIN_USER" -H \
+    git -C "$REPO" pull --ff-only
+
+# --------------------------------------------------
+# INSTALL SYSTEMD FILES
+# --------------------------------------------------
+
+SYSTEMD_SOURCE="$REPO/vm/systemd"
+
+install -m 0644 \
+    "$SYSTEMD_SOURCE/devops-update.service" \
+    /etc/systemd/system/
+
+install -m 0644 \
+    "$SYSTEMD_SOURCE/devops-update.timer" \
+    /etc/systemd/system/
+
+install -m 0644 \
+    "$SYSTEMD_SOURCE/on-startup.service" \
+    /etc/systemd/system/
+
+chmod +x "$REPO/vm/update.sh"
+chmod +x "$REPO/vm/on-startup.sh"
+
+systemctl daemon-reload
+systemctl enable --now devops-update.timer
 
 # --------------------------------------------------
 # LOAD VM CONFIGURATION
@@ -27,60 +98,111 @@ sudo systemctl enable --now devops-update.timer
 
 source "$SCRIPT_DIR/vms.conf"
 
+VM_NAME="$(hostname)"
 
-VM_NAME=$(hostname)
-
-# Get containers for current VM, otherwise fallback
 CONTAINERS="${VM_CONTAINERS[$VM_NAME]:-${VM_CONTAINERS[fallback]:-}}"
 
 if [[ -z "$CONTAINERS" ]]; then
-    bash "$NOTIFY_SCRIPT" --echo --log "No containers configured for $VM_NAME"
+    notify --echo --log "No containers configured for $VM_NAME"
     exit 0
 fi
 
-bash "$NOTIFY_SCRIPT" "Deploying containers for $VM_NAME: $CONTAINERS"
+notify "Deploying containers for $VM_NAME: $CONTAINERS"
+
+# --------------------------------------------------
+# PREPARE ROOTLESS PODMAN USER
+# --------------------------------------------------
+
+loginctl enable-linger "$PODMAN_USER"
+
+# Start the user systemd manager.
+systemctl start "user@${PODMAN_UID}.service"
+
+# Ensure runtime directory exists.
+if [[ ! -d "$PODMAN_RUNTIME" ]]; then
+    notify --echo --log "User runtime directory missing: $PODMAN_RUNTIME"
+    exit 1
+fi
+
+# Prepare Quadlet directory.
+QUADLET_DIR="$PODMAN_HOME/.config/containers/systemd"
+
+install -d \
+    -o "$PODMAN_USER" \
+    -g "$PODMAN_USER" \
+    -m 0755 \
+    "$QUADLET_DIR"
+
 # --------------------------------------------------
 # INSTALL QUADLET FILES
 # --------------------------------------------------
 
-QUADLET_DIR="$HOME/.config/containers/systemd"
-mkdir -p "$QUADLET_DIR"
+CHANGED=0
 
 for container in $CONTAINERS; do
 
     KUBE_FILE="$VMS_DIR/containers/$container/$container.kube"
+    TARGET_FILE="$QUADLET_DIR/$container.kube"
 
     if [[ ! -f "$KUBE_FILE" ]]; then
-        bash "$NOTIFY_SCRIPT" --echo --log "Missing Quadlet file: $KUBE_FILE"
+        notify --echo --log "Missing Quadlet file: $KUBE_FILE"
         exit 1
     fi
 
-    bash "$NOTIFY_SCRIPT" --echo --log "Installing Quadlet unit: $container cp $KUBE_FILE -> $QUADLET_DIR/$container.kube"
+    # Only copy when the file has changed.
+    if ! cmp -s "$KUBE_FILE" "$TARGET_FILE" 2>/dev/null; then
 
-    cp "$KUBE_FILE" "$QUADLET_DIR/$container.kube"
+        notify --echo --log "Installing Quadlet: $container"
+
+        install \
+            -o "$PODMAN_USER" \
+            -g "$PODMAN_USER" \
+            -m 0644 \
+            "$KUBE_FILE" \
+            "$TARGET_FILE"
+
+        CHANGED=1
+    fi
 
 done
 
-# does this need to run every 5 minues or no?
-USER_ID=$(id -u "$USER")
-sudo systemctl start "user@${USER_ID}.service"
-bash "$NOTIFY_SCRIPT" --echo --log "$(hostname): sudo systemctl start user@${USER_ID}.service"
+# --------------------------------------------------
+# RELOAD USER SYSTEMD
+# --------------------------------------------------
 
-export XDG_RUNTIME_DIR="/run/user/${USER_ID}"
-export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
-echo "DBUS_SESSION_BUS_ADDRESS: $DBUS_SESSION_BUS_ADDRESS"
-echo "XDG_RUNTIME_DIR: $XDG_RUNTIME_DIR"
+if [[ "$CHANGED" -eq 1 ]]; then
+    notify "Quadlet configuration changed. Reloading user systemd..."
 
-systemctl --user daemon-reload
+    run_podmanager systemctl --user daemon-reload
+else
+    notify --echo --log "No Quadlet configuration changes detected"
+fi
 
 # --------------------------------------------------
-# START CONTAINERS
+# START / RESTART CONTAINERS
 # --------------------------------------------------
 
 for container in $CONTAINERS; do
-    bash "$NOTIFY_SCRIPT" --echo --log "Starting $container.service:  systemctl --user start $container.service"
-    
-    systemctl --user start "$container.service"
+
+    SERVICE="$container.service"
+
+    if [[ "$CHANGED" -eq 1 ]]; then
+        # Restart existing services to apply changed configuration.
+        if run_podmanager systemctl --user is-active --quiet "$SERVICE"; then
+            notify "Restarting $SERVICE"
+            run_podmanager systemctl --user restart "$SERVICE"
+        else
+            notify "Starting $SERVICE"
+            run_podmanager systemctl --user start "$SERVICE"
+        fi
+    else
+        # Ensure services are running.
+        if ! run_podmanager systemctl --user is-active --quiet "$SERVICE"; then
+            notify "Starting $SERVICE"
+            run_podmanager systemctl --user start "$SERVICE"
+        fi
+    fi
+
 done
 
-bash "$NOTIFY_SCRIPT" "All workloads deployed successfully"
+notify "All workloads deployed successfully"
