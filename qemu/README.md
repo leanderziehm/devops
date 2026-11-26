@@ -63,7 +63,7 @@ packages:
 
 runcmd:
   - sudo timedatectl set-timezone Europe/Berlin
-  - sudo -u admin bash -c "bash <(curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/vm/setup.sh)"
+  - sudo -u admin bash -c "curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/vm/setup.sh | sudo bash"
   - |
     set -e
     HOSTNAME=$(hostname)

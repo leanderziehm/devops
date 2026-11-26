@@ -34,7 +34,7 @@ sudo -u "$ADMIN_USER" -H git -C "$REPO" config core.fileMode false
 
 sudo bash "$REPO/vm/update.sh"
 
-curl -X 'POST' 'https://notify.leanderziehm.com/notify/me' -H 'accept: */*' -H 'Content-Type: application/json' -d "{ \"text\": \"$(hostname): setup-devops.sh ran with user: $(whoami)\" }"
+curl -X 'POST' 'https://notify.leanderziehm.com/notify/me' -H 'accept: */*' -H 'Content-Type: application/json' -d "{ \"text\": \"$(hostname): setup.sh ran with user: $(whoami)\" }"
 
 
 # old sudo version

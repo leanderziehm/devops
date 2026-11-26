@@ -2,7 +2,7 @@
 
 
 ```
-bash <(curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/scripts/setup-devops.sh)
+curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/vm/setup.sh | sudo bash
 ```
 
 
