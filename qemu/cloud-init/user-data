@@ -35,11 +35,11 @@ packages:
   - git
 
 runcmd:
-  - sudo -u admin bash -c "echo \"Cloudinit runcmd ran on $(date)\" >> /home/admin/cloudinit_runcmd.log"
-  - sudo -u admin bash -c "echo \"TODO implement ansible and terraform. \" >> /home/admin/cloudinit_runcmd.log"
-  - sudo -u admin bash -c "mkdir -p /opt/lz && git -C /opt/lz clone https://github.com/leanderziehm/devops && bash /opt/lz/devops/vms/setup.sh"
+  - sudo timedatectl set-timezone Europe/Berlin
+  - sudo -u admin bash -c "echo \"Cloudinit runcmd ran on $(date) TODO implement ansible and terraform.\" >> /home/admin/cloudinit_runcmd.log"
+  - sudo -u admin bash -c "bash <(curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/scripts/setup-devops.sh)"
   - >-
-    curl -X 'POST' 'https://notify.leanderziehm.com/notify/me' -H 'accept: */*' -H 'Content-Type: application/json' -d '{ "text": "hello from vm2" }'
+    curl -X 'POST' 'https://notify.leanderziehm.com/notify/me' -H 'accept: */*' -H 'Content-Type: application/json' -d '{ "text": "cloud-init of a qemu vm is running now." }'
   - |
     set -e
     HOSTNAME=$(hostname)
@@ -49,7 +49,7 @@ runcmd:
     INSTANCE_ID=$(cloud-init query instance_id 2>/dev/null || echo unknown)
     REGION=$(cloud-init query region 2>/dev/null || echo unknown)
     IMAGE=$(cloud-init query --format '{{ v1.cloud_name }}' 2>/dev/null || echo unknown)
-    TEXT="VM initialized
+    TEXT="qemu cloudinit runcmd last command. VM initialized
       hostname: ${HOSTNAME}
       fqdn: ${FQDN}
       ipv4: ${IPV4}

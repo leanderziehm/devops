@@ -40,10 +40,6 @@ curl -O https://raw.githubusercontent.com/LeanderZiehm/devops/refs/heads/main/ot
 
 
 
-### Setup Devops:
-```sh
-curl -O https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/others/setup.sh && bash setup.sh
-```
 
 ```
 ln -s ~/devops/backup-postgres.sh ~/backup-postgres.sh

@@ -1,14 +1,22 @@
 sudo mkdir -p /opt/lz
 sudo git -C /opt/lz clone https://github.com/leanderziehm/devops
+sudo git -C /opt/lz/devops config core.fileMode false
 sudo git -C /opt/lz/devops pull
-sudo bash /opt/lz/devops/vms/setup.sh
+sudo bash /opt/lz/devops/vms/update.sh
 
+echo "enable linger"
+sudo loginctl enable-linger "$USER"
 
 curl -X 'POST' 'https://notify.leanderziehm.com/notify/me' -H 'accept: */*' -H 'Content-Type: application/json' -d "{ \"text\": \"$(hostname): setup-devops.sh ran with user: $(whoami)\" }"
 
+
+# tools: firewalld.
+# os: linux usually rhel based so rocky, alma, fedora but can be debian or others
+
+
 # sudo install -d -o admin -g admin -m 755 /opt/lz
 # sudo -u admin -c "git clone https://github.com/leanderziehm/devops /opt/lz/devops"
-# sudo -u admin -c "bash /opt/lz/devops/vms/setup.sh"
+# sudo -u admin -c "bash /opt/lz/devops/vms/update.sh"
 
 ###
 
@@ -24,12 +32,12 @@ curl -X 'POST' 'https://notify.leanderziehm.com/notify/me' -H 'accept: */*' -H '
 #     fi
 # }
 
-# runasuser admin "sudo -S install -d -o admin -g admin -m 755 /opt/lz && git -C /opt/lz clone https://github.com/leanderziehm/devops ; git -C /opt/lz/devops pull ; bash /opt/lz/devops/vms/setup.sh"
+# runasuser admin "sudo -S install -d -o admin -g admin -m 755 /opt/lz && git -C /opt/lz clone https://github.com/leanderziehm/devops ; git -C /opt/lz/devops pull ; bash /opt/lz/devops/vms/update.sh"
 
 ###
 
 # sudo -u admin -c "sudo -S install -d -o admin -g admin -m 755 /opt/lz git -C /opt/lz clone https://github.com/leanderziehm/devops ; git -C /opt/lz/devops pull"
-# bash /opt/lz/devops/vms/setup.sh
+# bash /opt/lz/devops/vms/update.sh
 
 # su admin -c "sudo -S install -d -o admin -g admin -m 755 /opt/lz git -C /opt/lz clone https://github.com/leanderziehm/devops ; git -C /opt/lz/devops pull"
-# bash /opt/lz/devops/vms/setup.sh
+# bash /opt/lz/devops/vms/update.sh
