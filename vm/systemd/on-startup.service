@@ -5,7 +5,7 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/opt/lz/devops/vms/on-startup.sh
+ExecStart=/opt/lz/devops/vm/on-startup.sh
 
 [Install]
 WantedBy=multi-user.target

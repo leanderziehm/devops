@@ -1,10 +1,10 @@
 # ~/.config/containers/systemd/example-api.kube
 [Unit]
-Description=My Podman Kube Pod
+Description=Adguard
 
 [Kube]
 # Use an absolute path, or a path relative to the unit file location
-Yaml=/opt/lz/devops/vms/containers/example-api/deployment.yaml
+Yaml=/opt/lz/devops/vm/containers/adguard/deployment.yaml
 
 [Install]
 # This is the critical line that makes it start on boot

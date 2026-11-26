@@ -10,11 +10,11 @@ git -C /opt/lz/devops pull
 # todo maybe detech if there where any changes in git and if so then deploy only on changes 
 
 # setup systemd
-sudo cp /opt/lz/devops/vms/systemd/devops-update.service /etc/systemd/system/
-sudo cp /opt/lz/devops/vms/systemd/devops-update.timer /etc/systemd/system/
-sudo cp /opt/lz/devops/vms/systemd/on-startup.service /etc/systemd/system/
-sudo chmod +x /opt/lz/devops/vms/update.sh
-sudo chmod +x /opt/lz/devops/vms/on-startup.sh
+sudo cp /opt/lz/devops/vm/systemd/devops-update.service /etc/systemd/system/
+sudo cp /opt/lz/devops/vm/systemd/devops-update.timer /etc/systemd/system/
+sudo cp /opt/lz/devops/vm/systemd/on-startup.service /etc/systemd/system/
+sudo chmod +x /opt/lz/devops/vm/update.sh
+sudo chmod +x /opt/lz/devops/vm/on-startup.sh
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now devops-update.timer

@@ -1,10 +1,10 @@
 ```
-ENVIRONMENT=dev VM_NAME=alma-vm1 bash vms/update.sh
+ENVIRONMENT=dev VM_NAME=alma-vm1 bash vm/update.sh
 ```
 
 
 ```
-ENVIRONMENT=dev VM_NAME=alma-vm1 bash /opt/lz/devops/vms/update.sh
+ENVIRONMENT=dev VM_NAME=alma-vm1 bash /opt/lz/devops/vm/update.sh
 ```
 
 
