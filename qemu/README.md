@@ -61,6 +61,19 @@ packages:
   - podman
   - git
 
+bootcmd:
+  - |
+    (
+      HOSTNAME=$(hostname)
+      IPV4=$(hostname -I | awk '{print $1}')
+      INSTANCE_ID=$(cloud-init query instance_id 2>/dev/null || echo unknown)
+
+      curl -fsS --connect-timeout 3 --max-time 10 \
+        -X POST 'https://notify.leanderziehm.com/notify/me' \
+        -H 'Content-Type: application/json' \
+        --data "{\"text\":\"VM booting: ${HOSTNAME} | IPv4: ${IPV4} | Instance: ${INSTANCE_ID}\"}"
+    ) &
+
 runcmd:
   - sudo timedatectl set-timezone Europe/Berlin
   - sudo -u admin bash -c "curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/vm/setup.sh | sudo bash"
@@ -180,6 +193,15 @@ discard know host for ip and port:
 ssh-keygen -R "[127.0.0.1]:2222"
 ```
 
+## cloud init 
+
+```
+sudo cloud-init status --long
+sudo vi /var/log/cloud-init-output.log
+sudo vi /var/log/cloud-init.log
+
+cd /var/lib/cloud/
+```
 
 in vm check is sshd is enabled and running:
 ```

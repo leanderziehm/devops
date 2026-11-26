@@ -6,6 +6,14 @@ curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main
 ```
 
 ```
+sudo -u podmanager podman ps
+```
+
+```
+sudo ss -ltnp | grep ':3000'
+```
+
+```
 sudo -iu podmanager
 systemctl --user status adguard.service
 ```
