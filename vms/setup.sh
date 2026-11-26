@@ -39,6 +39,10 @@ for kube_file in "${KUBE_UNITS[@]}"; do
     cp "$kube_file" "$QUADLET_DIR/$name"
 done
 
+# Ensure user session environment variables are set for systemctl --user
+export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
+
 # 3. Reload systemd so Quadlet generates the services
 systemctl --user daemon-reload
 

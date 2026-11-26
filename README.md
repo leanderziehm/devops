@@ -1,6 +1,11 @@
 # Devops
 
 
+```
+bash <(curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/scripts/setup-devops.sh)
+```
+
+
 # linux isos:
 
 https://www.debian.org/distrib/
