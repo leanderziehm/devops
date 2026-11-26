@@ -183,3 +183,8 @@ systemctl daemon-reload
 systemctl enable --now cloud-init-monitor.service
 
 echo "Cloud-init monitor installed and running!"
+
+
+
+# setup terminal login info tips:
+curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/scripts/setups/setup-terminal-login-info.sh| sudo bash

@@ -8,6 +8,9 @@ curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main
 ```
 curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/scripts/cloud-init-monitor.sh | sudo bash
 ```
+```
+curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/scripts/setups/setup-terminal-login-info.sh| sudo bash
+```
 
 ```
 sudo -u podmanager podman ps
