@@ -84,8 +84,6 @@ for container in $CONTAINERS; do
     systemctl --user enable --now "$container.service"
 done
 
-
-
 bash "$NOTIFY_SCRIPT" "All workloads deployed successfully"
 
 

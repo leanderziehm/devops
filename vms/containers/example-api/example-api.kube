@@ -4,7 +4,7 @@ Description=My Podman Kube Pod
 
 [Kube]
 # Use an absolute path, or a path relative to the unit file location
-Yaml=/opt/lz/devops/vms/alma-vm1/containers/example-api/deployment.yaml
+Yaml=/opt/lz/devops/vms/containers/example-api/deployment.yaml
 
 [Install]
 # This is the critical line that makes it start on boot
