@@ -1,4 +1,3 @@
-
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -14,7 +13,6 @@ ADMIN_USER="admin"
 PODMAN_USER="podmanager"
 
 REPO="/opt/lz/devops"
-REPO_URL="https://github.com/leanderziehm/devops"
 
 # This script requires root for system-level operations.
 if [[ $EUID -ne 0 ]]; then
@@ -24,13 +22,14 @@ fi
 
 ADMIN_HOME="$(getent passwd "$ADMIN_USER" | cut -d: -f6)"
 PODMAN_HOME="$(getent passwd "$PODMAN_USER" | cut -d: -f6)"
-PODMAN_UID="$(id -u "$PODMAN_USER")"
-PODMAN_GID="$(id -g "$PODMAN_USER")"
 
 if [[ -z "$ADMIN_HOME" || -z "$PODMAN_HOME" ]]; then
     echo "Required user does not exist"
     exit 1
 fi
+
+PODMAN_UID="$(id -u "$PODMAN_USER")"
+PODMAN_GID="$(id -g "$PODMAN_USER")"
 
 PODMAN_RUNTIME="/run/user/$PODMAN_UID"
 
@@ -39,7 +38,7 @@ PODMAN_RUNTIME="/run/user/$PODMAN_UID"
 # --------------------------------------------------
 
 notify() {
-    bash "$NOTIFY_SCRIPT" "$@"
+    bash "$NOTIFY_SCRIPT" "$(hostname): $@ as user $(whoami)"
 }
 
 run_podmanager() {
@@ -57,7 +56,7 @@ run_podmanager() {
 # NOTIFY
 # --------------------------------------------------
 
-notify "$(hostname): update using update.sh as user $(whoami)"
+notify "update using update.sh"
 
 # --------------------------------------------------
 # UPDATE GIT REPOSITORY AS ADMIN
@@ -125,18 +124,23 @@ if [[ ! -d "$PODMAN_RUNTIME" ]]; then
 fi
 
 # Prepare Quadlet directory.
-QUADLET_DIR="$PODMAN_HOME/.config/containers/systemd"
-
+# Ensure the complete configuration directory hierarchy belongs to podmanager.
 install -d \
     -o "$PODMAN_USER" \
     -g "$PODMAN_USER" \
     -m 0755 \
-    "$QUADLET_DIR"
+    "$PODMAN_HOME/.config/containers/systemd"
 
+chown "$PODMAN_USER:$PODMAN_USER" "$PODMAN_HOME/.config"
+chown "$PODMAN_USER:$PODMAN_USER" "$PODMAN_HOME/.config/containers"
+
+QUADLET_DIR="$PODMAN_HOME/.config/containers/systemd"
+chown -R "$PODMAN_UID:$PODMAN_GID" "$QUADLET_DIR"
 # --------------------------------------------------
 # INSTALL QUADLET FILES
 # --------------------------------------------------
 
+declare -A CHANGED_CONTAINERS=()
 CHANGED=0
 
 for container in $CONTAINERS; do
@@ -149,21 +153,20 @@ for container in $CONTAINERS; do
         exit 1
     fi
 
-    # Only copy when the file has changed.
     if ! cmp -s "$KUBE_FILE" "$TARGET_FILE" 2>/dev/null; then
 
-        notify --echo --log "Installing Quadlet: $container"
+        notify "Installing Quadlet: $container"
 
         install \
-            -o "$PODMAN_USER" \
-            -g "$PODMAN_USER" \
+            -o "$PODMAN_UID" \
+            -g "$PODMAN_GID" \
             -m 0644 \
             "$KUBE_FILE" \
             "$TARGET_FILE"
 
+        CHANGED_CONTAINERS["$container"]=1
         CHANGED=1
     fi
-
 done
 
 # --------------------------------------------------
@@ -186,8 +189,8 @@ for container in $CONTAINERS; do
 
     SERVICE="$container.service"
 
-    if [[ "$CHANGED" -eq 1 ]]; then
-        # Restart existing services to apply changed configuration.
+    if [[ -n "${CHANGED_CONTAINERS[$container]:-}" ]]; then
+
         if run_podmanager systemctl --user is-active --quiet "$SERVICE"; then
             notify "Restarting $SERVICE"
             run_podmanager systemctl --user restart "$SERVICE"
@@ -195,12 +198,14 @@ for container in $CONTAINERS; do
             notify "Starting $SERVICE"
             run_podmanager systemctl --user start "$SERVICE"
         fi
+
     else
-        # Ensure services are running.
+
         if ! run_podmanager systemctl --user is-active --quiet "$SERVICE"; then
             notify "Starting $SERVICE"
             run_podmanager systemctl --user start "$SERVICE"
         fi
+
     fi
 
 done
