@@ -1,0 +1,17 @@
+alma-vm1:
+  containers:
+    - nginx
+    - example-api
+
+fedora:
+  containers:
+    - nginx
+
+rocky10-vm:
+  containers:
+    - example-api
+
+fallback:
+  containers:
+    - nginx
+    - example-api

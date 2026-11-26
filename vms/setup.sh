@@ -15,45 +15,59 @@ sudo chmod +x /opt/lz/devops/vms/update/update.sh
 sudo systemctl daemon-reload
 sudo systemctl enable --now devops-update.timer
 
-if [[ ! -d "$VM_DIR/containers" ]]; then
-    bash "$NOTIFY_SCRIPT" --echo --log "No containers directory found for $VM_NAME"
-    exit 1
-fi
+### CONTAINERS:
 
-shopt -s nullglob
+# --------------------------------------------------
+# LOAD VM CONFIGURATION
+# --------------------------------------------------
 
-# 1. Ensure the Quadlet directory exists (rootless user path)
-QUADLET_DIR="$HOME/.config/containers/systemd"
-mkdir -p "$QUADLET_DIR"
+source "$SCRIPT_DIR/vms.conf"
 
-# 2. Copy every .kube file from your repo into the Quadlet directory
-KUBE_UNITS=("$VM_DIR"/containers/*/*.kube)
-if [[ ${#KUBE_UNITS[@]} -eq 0 ]]; then
-    bash "$NOTIFY_SCRIPT" --echo --log "No .kube unit files found"
+# Get containers for current VM, otherwise fallback
+CONTAINERS="${VM_CONTAINERS[$VM_NAME]:-${VM_CONTAINERS[fallback]:-}}"
+
+if [[ -z "$CONTAINERS" ]]; then
+    bash "$NOTIFY_SCRIPT" --echo --log "No containers configured for $VM_NAME"
     exit 0
 fi
 
-for kube_file in "${KUBE_UNITS[@]}"; do
-    name="$(basename "$kube_file")"
-    bash "$NOTIFY_SCRIPT" --echo --log "Installing Quadlet unit: $name  $kube_file $QUADLET_DIR/$name"
-    cp "$kube_file" "$QUADLET_DIR/$name"
-done
+bash "$NOTIFY_SCRIPT" "Deploying containers for $VM_NAME: $CONTAINERS"
+# --------------------------------------------------
+# INSTALL QUADLET FILES
+# --------------------------------------------------
 
-# Ensure user session environment variables are set for systemctl --user
+QUADLET_DIR="$HOME/.config/containers/systemd"
+mkdir -p "$QUADLET_DIR"
+
 export XDG_RUNTIME_DIR="/run/user/$(id -u)"
 export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
 
-# 3. Reload systemd so Quadlet generates the services
-systemctl --user daemon-reload
+for container in $CONTAINERS; do
 
-# 4. Enable and start each generated service
-for kube_file in "${KUBE_UNITS[@]}"; do
-    service_name="$(basename "$kube_file" .kube)"
-    bash "$NOTIFY_SCRIPT" --echo --log "Start: systemctl --user start $service_name.service"
-    systemctl --user start "$service_name.service"
+    KUBE_FILE="$VM_DIR/containers/$container/$container.kube"
+
+    if [[ ! -f "$KUBE_FILE" ]]; then
+        bash "$NOTIFY_SCRIPT" --echo --log "Missing Quadlet file: $KUBE_FILE"
+        exit 1
+    fi
+
+    bash "$NOTIFY_SCRIPT" --echo --log "Installing Quadlet unit: $container"
+
+    cp "$KUBE_FILE" "$QUADLET_DIR/$container.kube"
+
 done
 
-# 5. CRITICAL for rootless: enable lingering so services start on boot
+systemctl --user daemon-reload
+
+# --------------------------------------------------
+# START CONTAINERS
+# --------------------------------------------------
+
+for container in $CONTAINERS; do
+    bash "$NOTIFY_SCRIPT" --echo --log "Starting $container.service"
+    systemctl --user enable --now "$container.service"
+done
+
 loginctl enable-linger "$USER"
 
 bash "$NOTIFY_SCRIPT" "All workloads deployed successfully"
