@@ -23,6 +23,9 @@ sudo systemctl enable --now devops-update.timer
 
 source "$SCRIPT_DIR/vms.conf"
 
+
+VM_NAME = $(hostname)
+
 # Get containers for current VM, otherwise fallback
 CONTAINERS="${VM_CONTAINERS[$VM_NAME]:-${VM_CONTAINERS[fallback]:-}}"
 
@@ -44,7 +47,7 @@ export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
 
 for container in $CONTAINERS; do
 
-    KUBE_FILE="$VM_DIR/containers/$container/$container.kube"
+    KUBE_FILE="$VMS_DIR/containers/$container/$container.kube"
 
     if [[ ! -f "$KUBE_FILE" ]]; then
         bash "$NOTIFY_SCRIPT" --echo --log "Missing Quadlet file: $KUBE_FILE"
