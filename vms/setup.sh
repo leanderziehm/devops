@@ -28,7 +28,7 @@ sudo systemctl enable --now devops-update.timer
 source "$SCRIPT_DIR/vms.conf"
 
 
-VM_NAME = $(hostname)
+VM_NAME=$(hostname)
 
 # Get containers for current VM, otherwise fallback
 CONTAINERS="${VM_CONTAINERS[$VM_NAME]:-${VM_CONTAINERS[fallback]:-}}"
