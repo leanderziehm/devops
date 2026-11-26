@@ -24,8 +24,8 @@ cat > "$MONITOR" <<'MONITOR_EOF'
 set -uo pipefail
 
 LOG="/var/log/cloud-init-output.log"
-INTERVAL=10
-NOTIFY_INTERVAL=30
+INTERVAL=5
+NOTIFY_INTERVAL=15
 
 API="https://notify.leanderziehm.com/notify/me"
 
@@ -91,7 +91,7 @@ get_status() {
 # Initial notification
 # ------------------------------------------------------------
 
-notify "🟡 CLOUD-INIT STARTED
+notify "CLOUD-INIT STARTED
 
 Host: $HOSTNAME
 Time: $(date '+%Y-%m-%d %H:%M:%S')
@@ -138,7 +138,7 @@ $(get_logs)"
 
     if (( NOW - LAST_NOTIFY >= NOTIFY_INTERVAL )); then
 
-        notify "🟡 CLOUD-INIT IN PROGRESS
+        notify "CLOUD-INIT IN PROGRESS
 
 Host: $HOSTNAME
 Elapsed: ${ELAPSED}s
