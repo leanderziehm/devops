@@ -1,0 +1,9 @@
+[Unit]
+Description=DevOps Git configuration updater
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/lz/devops/scripts/update.sh
+User=root

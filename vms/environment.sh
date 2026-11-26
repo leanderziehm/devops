@@ -29,7 +29,7 @@ esac
 VM_DIR="$VMS_DIR/$VM_NAME"
 REPO="$(dirname "$VMS_DIR")"
 NOTIFY_SCRIPT="$REPO/scripts/notify.sh"
-
+UPDATE_SCRIPT="$REPO/vms/update/update.sh"
 
 echo "ENVIRONMENT: $ENVIRONMENT"
 echo "VM_NAME: $VM_NAME"
@@ -37,6 +37,6 @@ echo "REPO: $REPO"
 echo "VMS_DIR: $VMS_DIR"
 echo "VM_DIR: $VM_DIR"
 
-export ENVIRONMENT VM_NAME REPO VMS_DIR VM_DIR NOTIFY_SCRIPT
+export ENVIRONMENT VM_NAME REPO VMS_DIR VM_DIR NOTIFY_SCRIPT UPDATE_SCRIPT
 
 bash $NOTIFY_SCRIPT --echo --log "Environment Loaded on $(hostname -s): $ENVIRONMENT $VM_NAME"

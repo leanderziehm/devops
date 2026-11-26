@@ -1,4 +1,4 @@
-# ~/.config/containers/systemd/myapp.kube
+# ~/.config/containers/systemd/nginx.kube
 [Unit]
 Description=My Podman Kube Pod
 

@@ -1,10 +1,5 @@
-
 ```
-ENVIRONMENT=dev VM_NAME=alma-vm1 bash scripts/setup-devops.sh
-```
-
-```
-ENVIRONMENT=dev VM_NAME=alma-vm1 bash setup.sh
+ENVIRONMENT=dev VM_NAME=alma-vm1 bash vms/setup.sh
 ```
 
 
