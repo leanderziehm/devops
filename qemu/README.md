@@ -91,9 +91,6 @@ runcmd:
       --data "$(jq -n --arg text "$TEXT" '{text: $text}')"
 EOF
 ```
-todo: firewall ip securiyt
-
-
 
 create cloud init seed iso:
 ```
@@ -114,20 +111,25 @@ systemctl status sshd
 
 if sshd is enabled and running run this command outside of vm check if you can get in: (each linux distro has other default usernames: rocky,almalinux,fedora,debain) 
 ```
-ssh -p 2222 root@127.0.0.1
+ssh -p 2222 roots@127.0.0.1
+```
+
+```
+ssh-keygen -R "[127.0.0.1]:2222"
 ```
 
 # 4. Use over ssh
 ```
-qemu-system-x86_64 -enable-kvm -m 2048 -cpu host -drive file=rocky10-overlay1.qcow2,if=virtio,format=qcow2 -nic user,model=virtio-net-pci,hostfwd=tcp::2222-:22,hostfwd=tcp::8080-:8080,hostfwd=tcp::8443-:8443 -display none
+qemu-system-x86_64 -enable-kvm -m 2048 -cpu host -drive file=rocky10-overlay1.qcow2,if=virtio,format=qcow2 -nic user,model=virtio-net-pci,hostfwd=tcp::2222-:22,hostfwd=tcp::8080-:8081,hostfwd=tcp::8443-:8443 -display none
 ```
 
+use ssh with ssh key:
 ```
-ssh -p 2222 roots@127.0.0.1
+ssh -p 2222 admin@127.0.0.1
 ```
-
 
 # security considerations:
+todo: firewall ip securiyt
 
 ## never run as root
 
