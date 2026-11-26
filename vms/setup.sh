@@ -8,9 +8,13 @@ bash $NOTIFY_SCRIPT "setting up vm using devops setup.sh"
 bash $NOTIFY_SCRIPT "setting up update.sh as user $(whoami)"
 bash $UPDATE_SCRIPT
 
-sudo cp /opt/lz/devops/vms/update/devops-update.service /etc/systemd/system/
-sudo cp /opt/lz/devops/vms/update/devops-update.timer /etc/systemd/system/
-sudo chmod +x /opt/lz/devops/vms/update/update.sh
+
+# setup systemd
+sudo cp /opt/lz/devops/vms/systemd/devops-update.service /etc/systemd/system/
+sudo cp /opt/lz/devops/vms/systemd/devops-update.timer /etc/systemd/system/
+sudo cp /opt/lz/devops/vms/systemd/on-startup.service /etc/systemd/system/
+sudo chmod +x /opt/lz/devops/vms/update.sh
+sudo chmod +x /opt/lz/devops/vms/on-startup.sh
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now devops-update.timer

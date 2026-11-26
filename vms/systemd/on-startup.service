@@ -1,0 +1,11 @@
+[Unit]
+Description=Run my custom startup script
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/lz/devops/vms/on-startup.sh
+
+[Install]
+WantedBy=multi-user.target

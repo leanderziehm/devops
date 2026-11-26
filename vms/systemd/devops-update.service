@@ -5,5 +5,5 @@ After=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/opt/lz/devops/vms/update/update.sh
+ExecStart=/opt/lz/devops/vms/update.sh
 User=admin
