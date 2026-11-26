@@ -16,6 +16,10 @@ else
 fi
 loginctl enable-linger "$PODMAN_USER"
 
+UID_POD=$(id -u podmanager)
+
+sudo systemctl start user@"$UID_POD".service
+
 ## setup git repo:
 
 ADMIN_USER="admin"

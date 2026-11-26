@@ -5,6 +5,28 @@
 curl -fsSL https://raw.githubusercontent.com/leanderziehm/devops/refs/heads/main/vm/setup.sh | sudo bash
 ```
 
+```
+sudo -iu podmanager
+systemctl --user status adguard.service
+```
+```
+UID_POD=$(id -u podmanager)
+
+sudo -u podmanager \
+  XDG_RUNTIME_DIR="/run/user/$UID_POD" \
+  DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$UID_POD/bus" \
+  systemctl --user status adguard.service
+```
+
+```
+UID_POD=$(id -u podmanager)
+
+sudo -u podmanager \
+  XDG_RUNTIME_DIR="/run/user/$UID_POD" \
+  DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$UID_POD/bus" \
+  journalctl --user -u adguard.service -n 60 --no-pager
+```
+
 
 # linux isos:
 
