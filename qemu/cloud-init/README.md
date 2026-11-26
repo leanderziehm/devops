@@ -5,6 +5,8 @@
 cloud-init status --long
 sudo vi /var/log/cloud-init-output.log
 sudo vi /var/log/cloud-init.log
+
+cd /var/lib/cloud/
 ```
 
 todo implement:

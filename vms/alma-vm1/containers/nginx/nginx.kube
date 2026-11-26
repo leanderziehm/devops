@@ -1,0 +1,11 @@
+# ~/.config/containers/systemd/myapp.kube
+[Unit]
+Description=My Podman Kube Pod
+
+[Kube]
+# Use an absolute path, or a path relative to the unit file location
+Yaml=/opt/lz/devops/vms/alma-vm1/containers/nginx/deployment.yaml
+
+[Install]
+# This is the critical line that makes it start on boot
+WantedBy=default.target

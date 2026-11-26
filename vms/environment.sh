@@ -39,4 +39,4 @@ echo "VM_DIR: $VM_DIR"
 
 export ENVIRONMENT VM_NAME REPO VMS_DIR VM_DIR NOTIFY_SCRIPT
 
-bash $NOTIFY_SCRIPT "Environment Loaded on $(hostname -s): $ENVIRONMENT $VM_NAME"
+bash $NOTIFY_SCRIPT --echo --log "Environment Loaded on $(hostname -s): $ENVIRONMENT $VM_NAME"
