@@ -18,14 +18,14 @@ users:
     sudo: "ALL=(ALL) NOPASSWD:ALL"
     lock_passwd: true
     ssh_authorized_keys:
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NT...put_you_ssh_key_here pc@user
+      - SSH_KEY_HERE
 
   - name: user
     shell: /bin/bash
     lock_passwd: true
     sudo: null
     ssh_authorized_keys:
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NT...put_you_ssh_key_here pc@user
+      - SSH_KEY_HERE
 ssh_pwauth: true
 chpasswd:
   expire: false
@@ -33,6 +33,7 @@ chpasswd:
 packages:
   - podman
   - git
+# inetutils
 
 bootcmd:
   - |

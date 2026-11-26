@@ -7,12 +7,13 @@ run one of the commandds
 curl -L -o rocky10.qcow2 https://dl.rockylinux.org/pub/rocky/10/images/x86_64/Rocky-10-GenericCloud-Base.latest.x86_64.qcow2
 curl -L -o alma10.qcow2 https://repo.almalinux.org/almalinux/10/cloud/x86_64/images/AlmaLinux-10-GenericCloud-10.3-20261116.0.x86_64.qcow2
 curl -L -o fedora45.qcow2 https://download.fedoraproject.org/pub/fedora/linux/releases/45/Cloud/x86_64/images/Fedora-Cloud-Base-Generic-45-1.4.x86_64.qcow2
-curl -L -o debian-13-nocloud-amd64.qcow2 https://cloud.debian.org/images/cloud/trixie/latest/debian-13-nocloud-amd64.qcow2
 ```
 
 # 2. Setup Overlay Image
 ```
 qemu-img create -f qcow2 -b rocky10.qcow2 -F qcow2 rocky10-overlay1.qcow2
+qemu-img create -f qcow2 -b alma10.qcow2 -F qcow2 alma10-overlay1.qcow2
+qemu-img create -f qcow2 -b fedora45.qcow2 -F qcow2 fedora45-overlay1.qcow2
 ```
 
 # 3. Run once with cloudinit
@@ -250,6 +251,16 @@ you can also use virtual machine manager virsh as a gui and abstraction layer ab
 ---
 
 ## other notable linux vm images:
+
+```
+curl -L -o debian13.qcow2 https://cloud.debian.org/images/cloud/trixie/latest/debian-13-nocloud-amd64.qcow2
+```
+
+```
+qemu-img create -f qcow2 -b debian13.qcow2 -F qcow2 debian13-overlay1.qcow2
+
+```
+
 
 
 ### Alpine Linux

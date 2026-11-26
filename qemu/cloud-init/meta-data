@@ -1,2 +1,2 @@
-instance-id: rocky10-cloud-01
-local-hostname: rocky10-vm
+instance-id: VM_NAME-cloud-01
+local-hostname: VM_NAME-vm
