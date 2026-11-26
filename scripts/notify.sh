@@ -20,7 +20,24 @@ fi
 message="$*"
 
 $echo_flag && echo "$message"
-$log_flag  && printf '%s %s\n' "$(date '+%F %T')" "$message" >> "$HOME/notify.log"
+
+if $log_flag; then
+    if [[ $EUID -eq 0 ]]; then
+        log_file="/var/log/notify.log"
+    
+
+    if $log_flag; then
+        if command -v logger >/dev/null 2>&1; then
+            logger -t notify -p user.notice -- "$message"
+        else
+            printf '%s %s\n' "$(date '+%F %T')" "$message" \
+                >> "$HOME/notify.log"
+        fi
+    fi
+
+    printf '%s %s\n' "$(date '+%F %T')" "$message" >> "$log_file"
+fi
+
 
 send_notify() {
     curl -sS -X POST 'https://notify.leanderziehm.com/notify/me' \
