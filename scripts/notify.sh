@@ -1,12 +1,26 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+echo_flag=false
+log_flag=false
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --echo) echo_flag=true; shift ;;
+        --log)  log_flag=true;  shift ;;
+        *) break ;;
+    esac
+done
+
 if [[ $# -eq 0 ]]; then
-    echo "Usage: notify <message>" >&2
+    echo "Usage: notify [--echo] [--log] <message>" >&2
     exit 1
 fi
 
 message="$*"
+
+$echo_flag && echo "$message"
+$log_flag  && printf '%s %s\n' "$(date '+%F %T')" "$message" >> "$HOME/notify.log"
 
 send_notify() {
     curl -sS -X POST 'https://notify.leanderziehm.com/notify/me' \
@@ -45,6 +59,8 @@ escaped=${escaped//$'\b'/\\b}
 escaped=${escaped//$'\f'/\\f}
 
 send_notify "{ \"text\": \"$escaped\" }"
+
+
 
 # message="$*"
 # curl -X 'POST' 'https://notify.leanderziehm.com/notify/me' -H 'accept: */*' -H 'Content-Type: application/json' -d "{ \"text\": \"$message\" }"
