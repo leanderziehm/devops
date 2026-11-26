@@ -3,10 +3,12 @@ set -euo pipefail
 # Load environment variables
 source "$(dirname "${BASH_SOURCE[0]}")/environment.sh"
 
-bash $NOTIFY_SCRIPT "setting up vm using devops setup.sh"
 
+bash $NOTIFY_SCRIPT "setting up vm using devops setup.sh"
+loginctl enable-linger "$USER"
 bash $NOTIFY_SCRIPT "setting up update.sh as user $(whoami)"
 bash $UPDATE_SCRIPT
+
 
 
 # setup systemd
@@ -46,9 +48,6 @@ bash "$NOTIFY_SCRIPT" "Deploying containers for $VM_NAME: $CONTAINERS"
 QUADLET_DIR="$HOME/.config/containers/systemd"
 mkdir -p "$QUADLET_DIR"
 
-export XDG_RUNTIME_DIR="/run/user/$(id -u)"
-export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
-
 for container in $CONTAINERS; do
 
     KUBE_FILE="$VMS_DIR/containers/$container/$container.kube"
@@ -64,6 +63,16 @@ for container in $CONTAINERS; do
 
 done
 
+USER_ID=$(id -u "$USER")
+sudo loginctl enable-linger "$USER"
+sudo systemctl start "user@${USER_ID}.service"
+
+export XDG_RUNTIME_DIR="/run/user/${USER_ID}"
+export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
+
+echo "DBUS_SESSION_BUS_ADDRESS: $DBUS_SESSION_BUS_ADDRESS"
+echo "XDG_RUNTIME_DIR: $XDG_RUNTIME_DIR"
+
 systemctl --user daemon-reload
 
 # --------------------------------------------------
@@ -75,9 +84,13 @@ for container in $CONTAINERS; do
     systemctl --user enable --now "$container.service"
 done
 
-loginctl enable-linger "$USER"
+
 
 bash "$NOTIFY_SCRIPT" "All workloads deployed successfully"
+
+
+
+
 
 ### Old:
 
