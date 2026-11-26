@@ -24,6 +24,7 @@ $echo_flag && echo "$message"
 if $log_flag; then
     if [[ $EUID -eq 0 ]]; then
         log_file="/var/log/notify.log"
+    fi
     
 
     if $log_flag; then
